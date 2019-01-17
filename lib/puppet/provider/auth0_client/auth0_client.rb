@@ -57,7 +57,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
   private
   def get_client_id_by_name(context,name)
     found_clients = clients(context).find_all {|c| c['name'] == name }
-    context.warning("Found #{found_clients.count} clients with the name #{name}, choosing the first one.")
+    context.warning("Found #{found_clients.count} clients with the name #{name}, choosing the first one.") if found_clients.count > 1
     found_clients.dig(0,'client_id')
   end
 

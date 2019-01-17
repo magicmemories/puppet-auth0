@@ -1,4 +1,4 @@
-require_relative '../pops/adaptable/adatpers/auth0_adapter'
+require_relative '../pops/adapters/auth0_adapter'
 
 Puppet::Functions.create_function(:auth0_query) do
   dispatch :query do
@@ -10,12 +10,12 @@ Puppet::Functions.create_function(:auth0_query) do
   end
 
   dispatch :implicit_query do
-    param 'String', path
+    param 'String', :path
     return_type 'Hash'
   end
 
   def query(path,id,secret,domain)
-    client = Puppet::Pops::Adaptable::Adapters::Auth0Adapter.adapt(closure_scope.compiler).client(id,secret,domain)
+    client = Puppet::Pops::Adapters::Auth0Adapter.adapt(closure_scope.compiler).client(id,secret,domain)
     Puppet.info("Querying the Auth0 client")
     client.get(path)
   end
