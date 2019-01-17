@@ -12,7 +12,7 @@
 
 **Functions**
 
-* [`auth0_get_client_credentials`](#auth0_get_client_credentials): 
+* [`auth0_get_client_credentials`](#auth0_get_client_credentials): Retrieves Client (Application) credentials from the Auth0 Management API.
 
 ## Resource types
 
@@ -311,22 +311,21 @@ The name of the resource you want to manage.
 
 Type: Ruby 4.x API
 
-The auth0_get_client_credentials function.
+Retrieves Client (Application) credentials from the Auth0 Management API.
 
-#### `auth0_get_client_credentials(String $client_name, String $auth0_client_id, String $auth0_client_secret, String $auth0_domain)`
+#### `auth0_get_client_credentials(String $client_name, String $management_client_id, String $management_client_secret, String $tenant_domain)`
 
-Gets client_id and client_secret for a client specified by name in a specific tenant.
+Gets client_id and client_secret for a client specified by name.
 
-Returns: `Optional[Credentials]` Returns a Hash with two keys, 'client_id' and 'client_secret', containing
+Returns: `Optional[Credentials]` A Hash with two keys, 'client_id' and 'client_secret', containing
 the credentials for the requested client. Returns Undef if no client with
 the requested name could be found.
 
 ##### Examples
 
-###### 
+###### Retrieving client credentials.
 
 ```puppet
-Retrieving client credentials.
 auth0_get_client_credentials('Example Application',$auth0_id,$auth0_secret,'example.auth0.com')
 ```
 
@@ -336,19 +335,19 @@ Data type: `String`
 
 The name of the client whose credentials will be retrieved
 
-##### `auth0_client_id`
+##### `management_client_id`
 
 Data type: `String`
 
 The client_id that Puppet should use to access the Auth0 Management API
 
-##### `auth0_client_secret`
+##### `management_client_secret`
 
 Data type: `String`
 
 The client_secret that Puppet should use to access the Auth0 Management API
 
-##### `auth0_domain`
+##### `tenant_domain`
 
 Data type: `String`
 
@@ -358,19 +357,18 @@ The Auth0 Domain (Tenant) that is being queried.
 
 Gets client_id and client_secret for a client specified by name. Retrieves credentials for the Auth0
 Management API from Hiera under the keys 'auth0::management_client_id', 'auth0::management_client_secret'
-and 'auth0::management_domain'.
+and 'auth0::tenant_domain'.
 
-Returns: `Optional[Credentials]` Returns a Hash with two keys, 'client_id' and 'client_secret', containing
+Returns: `Optional[Credentials]` A Hash with two keys, 'client_id' and 'client_secret', containing
 the credentials for the requested client. Returns Undef if no client with
 the requested name could be found.
 
 ##### Examples
 
-###### 
+###### Retrieving client credentials.
 
 ```puppet
-Retrieving client credentials.
-auth0_get_client_credentials('Example Application',$auth0_id,$auth0_secret,'example.auth0.com')
+auth0_get_client_credentials('Example Application')
 ```
 
 ##### `client_name`

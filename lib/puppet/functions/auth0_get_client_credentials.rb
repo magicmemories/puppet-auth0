@@ -1,46 +1,45 @@
 require_relative '../pops/adapters/auth0_adapter'
 
+# Retrieves Client (Application) credentials from the Auth0 Management API.
 Puppet::Functions.create_function(:auth0_get_client_credentials) do
   local_types do
     type 'Credentials = Struct[{client_id => String, client_secret => String}]'
   end
 
-  # Gets client_id and client_secret for a client specified by name in a specific tenant.
+  # Gets client_id and client_secret for a client specified by name. 
   # @param client_name
   #   The name of the client whose credentials will be retrieved
-  # @param auth0_client_id
+  # @param management_client_id
   #   The client_id that Puppet should use to access the Auth0 Management API
-  # @param auth0_client_secret
+  # @param management_client_secret
   #   The client_secret that Puppet should use to access the Auth0 Management API
-  # @param auth0_domain
+  # @param tenant_domain
   #   The Auth0 Domain (Tenant) that is being queried.
   # @return
-  #   Returns a Hash with two keys, 'client_id' and 'client_secret', containing
+  #   A Hash with two keys, 'client_id' and 'client_secret', containing
   #   the credentials for the requested client. Returns Undef if no client with
   #   the requested name could be found.
-  # @example
-  #   Retrieving client credentials.
+  # @example Retrieving client credentials.
   #   auth0_get_client_credentials('Example Application',$auth0_id,$auth0_secret,'example.auth0.com')
   dispatch :query do
     param 'String', :client_name
-    param 'String', :auth0_client_id
-    param 'String', :auth0_client_secret
-    param 'String', :auth0_domain
+    param 'String', :management_client_id
+    param 'String', :management_client_secret
+    param 'String', :tenant_domain
     return_type 'Optional[Credentials]'
   end
 
   # Gets client_id and client_secret for a client specified by name. Retrieves credentials for the Auth0
   # Management API from Hiera under the keys 'auth0::management_client_id', 'auth0::management_client_secret'
-  # and 'auth0::management_domain'.
+  # and 'auth0::tenant_domain'.
   # @param client_name
   #   The name of the client whose credentials will be retrieved
   # @return
-  #   Returns a Hash with two keys, 'client_id' and 'client_secret', containing
+  #   A Hash with two keys, 'client_id' and 'client_secret', containing
   #   the credentials for the requested client. Returns Undef if no client with
   #   the requested name could be found.
-  # @example
-  #   Retrieving client credentials.
-  #   auth0_get_client_credentials('Example Application',$auth0_id,$auth0_secret,'example.auth0.com')
+  # @example Retrieving client credentials.
+  #   auth0_get_client_credentials('Example Application')
   dispatch :implicit_query do
     param 'String', :client_name
     return_type 'Optional[Credentials]'
@@ -48,7 +47,7 @@ Puppet::Functions.create_function(:auth0_get_client_credentials) do
 
   def query(client_name,id,secret,domain)
     api_client = Puppet::Pops::Adapters::Auth0Adapter.adapt(closure_scope.compiler).client(id,secret,domain)
-    Puppet.info("Querying the Auth0 client")
+    Puppet.info("Querying the Auth0 tenant at #{domain} for clients")
     
     found_clients = api_client.get_clients(fields: ['name','client_id','client_secret']).find_all {|c| c['name'] == client_name }
     context.warning("Found #{found_clients.count} clients with the name #{name}, choosing the first one.") if found_clients.count > 1
@@ -64,9 +63,9 @@ Puppet::Functions.create_function(:auth0_get_client_credentials) do
   end
 
   def implicit_query(client_name)
-    auth0_client_id = call_function('lookup','auth0::management_client_id')
-    auth0_client_secret = call_function('lookup','auth0::management_client_secret')
-    auth0_domain = call_function('lookup','auth0::managment_domain')
-    query(client_name,auth0_client_id,auth0_client_secret,auth0_domain)
+    management_client_id = call_function('lookup','auth0::management_client_id')
+    management_client_secret = call_function('lookup','auth0::management_client_secret')
+    tenant_domain = call_function('lookup','auth0::tenant_domain')
+    query(client_name,management_client_id,management_client_secret,tenant_domain)
   end
 end

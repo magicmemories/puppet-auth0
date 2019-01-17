@@ -13,7 +13,6 @@ class Puppet::Pops::Adapters::Auth0Adapter < Puppet::Pops::Adaptable::Adapter
     
   private
   def create_client(id,secret,domain)
-    Puppet.info("Creating Auth0::Client")
     Auth0::Client.new(
       client_id: id,
       client_secret: secret,
