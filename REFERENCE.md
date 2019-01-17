@@ -6,7 +6,7 @@
 **Resource types**
 
 * [`auth0_client`](#auth0_client): This type provides Puppet with the capabilities to manage Auth0 Client (Application) resources.
-* [`auth0_connection`](#auth0_connection): This type provides Puppet with the capabilities to manage ...
+* [`auth0_client_grant`](#auth0_client_grant): This type provides Puppet with the capabilities to manage client grants.
 * [`auth0_resource_server`](#auth0_resource_server): This type provides Puppet with the capabilities to manage Auth0 Resource Servers (APIs).
 * [`auth0_rule`](#auth0_rule): This type provides Puppet with the capabilities to manage Auth0 Rules
 
@@ -135,13 +135,13 @@ _*this data type contains a regex that may not be accurately reflected in genera
 
 The name of the client (Application). Does not allow "<" or ">".
 
-### auth0_connection
+### auth0_client_grant
 
-This type provides Puppet with the capabilities to manage ...
+This type provides Puppet with the capabilities to manage client grants.
 
 #### Properties
 
-The following properties are available in the `auth0_connection` type.
+The following properties are available in the `auth0_client_grant` type.
 
 ##### `ensure`
 
@@ -151,17 +151,31 @@ Whether this resource should be present or absent on the target system.
 
 Default value: present
 
+##### `audience`
+
+Data type: `String`
+
+The audience (identifier) of the resource server providing the grant.
+
+##### `scopes`
+
+Data type: `Array[String]`
+
+The scopes being granted to the client application.
+
+Default value: []
+
 #### Parameters
 
-The following parameters are available in the `auth0_connection` type.
+The following parameters are available in the `auth0_client_grant` type.
 
-##### `name`
+##### `client_name`
 
 namevar
 
 Data type: `String`
 
-The name of the connection you want to manage.
+The name of the client application receiving the grant.
 
 ### auth0_resource_server
 
@@ -307,6 +321,15 @@ Returns: `Optional[Credentials]` Returns a Hash with two keys, 'client_id' and '
 the credentials for the requested client. Returns Undef if no client with
 the requested name could be found.
 
+##### Examples
+
+###### 
+
+```puppet
+Retrieving client credentials.
+auth0_get_client_credentials('Example Application',$auth0_id,$auth0_secret,'example.auth0.com')
+```
+
 ##### `client_name`
 
 Data type: `String`
@@ -340,6 +363,15 @@ and 'auth0::management_domain'.
 Returns: `Optional[Credentials]` Returns a Hash with two keys, 'client_id' and 'client_secret', containing
 the credentials for the requested client. Returns Undef if no client with
 the requested name could be found.
+
+##### Examples
+
+###### 
+
+```puppet
+Retrieving client credentials.
+auth0_get_client_credentials('Example Application',$auth0_id,$auth0_secret,'example.auth0.com')
+```
 
 ##### `client_name`
 

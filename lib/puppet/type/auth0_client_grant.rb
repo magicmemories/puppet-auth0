@@ -3,7 +3,7 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'auth0_client_grant',
   docs: <<-EOS,
-      This type provides Puppet with the capabilities to manage ...
+      This type provides Puppet with the capabilities to manage client grants.
     EOS
   features: ['remote_resource'],
   title_patterns: [
