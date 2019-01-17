@@ -57,17 +57,11 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
   private
   def get_client_id_by_name(context,name)
     found_clients = clients(context).find_all {|c| c['name'] == name }
-    case found_clients.count
-    when 0 then nil
-    when 1 then found_clients[0]['client_id']
-    else
-      context.warning("Found #{found_clients.count} clients with the name #{name}, choosing the first one.")
-      found_clients[0]['client_id']
-    end
+    context.warning("Found #{found_clients.count} clients with the name #{name}, choosing the first one.")
+    found_clients.dig(0,'client_id')
   end
 
   def clients(context)
-    # TODO: handle paging in responses
     @__clients ||= context.device.connection.get_clients.reject {|c| c['name'] == 'All Applications' }
   end
 end
