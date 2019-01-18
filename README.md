@@ -12,7 +12,7 @@
 ## Description
 
 This module allows you to use Puppet to manage your Auth0 entities. It also provides the ability to query Auth0 and retrieve credentials
-for use in Machine-to-Machine authentication flows (which you can then write to an applicaiton config file).
+for use in Machine-to-Machine authentication flows (which you can then write to an application configuration file).
 
 ## Setup
 
@@ -150,8 +150,8 @@ file { '/etc/example.conf':
 
 ## Limitations
 In order for Puppet to operate, every resource needs an identifier which meets two criteria:
-1) It uniquely identifies a specific resource, consistently over time.
-2) It can be specified by the sysadmin when creating the resource.
+1. It uniquely identifies a specific resource, consistently over time.
+2. It can be specified by the sysadmin when creating the resource.
 
 Most Auth0 resource types have a unique identifier which fails the second criterion: for example, the unique identifier for an
 Auth0 Client resource should be its `client_id`, but you can't specify the client_id when creating a resource, so it can't be used as a
