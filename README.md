@@ -1,95 +1,168 @@
-
 # auth0
-
-Welcome to your new module. A short overview of the generated parts can be found in the PDK documentation at https://puppet.com/pdk/latest/pdk_generating_modules.html .
-
-The README template below provides a starting point with details about what information to include in your README.
-
-
-
-
-
-
 
 #### Table of Contents
 
 1. [Description](#description)
 2. [Setup - The basics of getting started with auth0](#setup)
-    * [What auth0 affects](#what-auth0-affects)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with auth0](#beginning-with-auth0)
-3. [Usage - Configuration options and additional functionality](#usage)
-4. [Limitations - OS compatibility, etc.](#limitations)
-5. [Development - Guide for contributing to the module](#development)
+3. [Usage - Managing Auth0](#usage---managing-auth0)
+4. [Usage - Querying Auth0](#usage---querying-auth0)
+5. [Limitations - OS compatibility, etc.](#limitations)
+6. [Development - Guide for contributing to the module](#development)
 
 ## Description
 
-Briefly tell users why they might want to use your module. Explain what your module does and what kind of problems users can solve with it.
-
-This should be a fairly short description helps the user decide if your module is what they want.
-
+This module allows you to use Puppet to manage your Auth0 entities. It also provides the ability to query Auth0 and retrieve credentials
+for use in Machine-to-Machine authentication flows (which you can then write to an applicaiton config file).
 
 ## Setup
 
-### What auth0 affects **OPTIONAL**
+In order for Puppet to access Auth0, you will need to create a Machine-to-Machine Application (aka a `non_interactive` client) inside Auth0,
+and grant that client access to the Auth0 Management API. See [Machine-to-Machine Applications](https://auth0.com/docs/applications/machine-to-machine)
+for details. 
 
-If it's obvious what your module touches, you can skip this section. For example, folks can probably figure out that your mysql_instance module affects their MySQL instances.
+This module treats each Auth0 tenant as a remote 'device', and uses the `puppet device` pattern for managing Auth0 resources. See the
+[Puppet Device](https://puppet.com/docs/puppet/5.5/puppet_device.html) Documentation for details. The easiest way to get started is to use
+the [puppetlabs-device_manager](https://forge.puppet.com/puppetlabs/device_manager) module, like so:
 
-If there's more that they should know about, though, this is the place to mention:
-
-* Files, packages, services, or operations that the module will alter, impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
-
-### Setup Requirements **OPTIONAL**
-
-If your module requires anything extra before setting up (pluginsync enabled, another module, etc.), mention it here.
-
-If your most recent release breaks compatibility or requires particular steps for upgrading, you might want to include an additional "Upgrading" section here.
-
-### Beginning with auth0
-
-The very basic steps needed for a user to get the module up and running. This can include setup steps, if necessary, or it can be an example of the most basic use of the module.
-
-## Usage
-
-Include usage examples for common use cases in the **Usage** section. Show your users how to use your module to solve problems, and be sure to include code examples. Include three to five examples of the most important or common tasks a user can accomplish with your module. Show users how to accomplish more complex tasks that involve different types, classes, and functions working in tandem.
-
-## Reference
-
-This section is deprecated. Instead, add reference information to your code as Puppet Strings comments, and then use Strings to generate a REFERENCE.md in your module. For details on how to add code comments and generate documentation with Strings, see the Puppet Strings [documentation](https://puppet.com/docs/puppet/latest/puppet_strings.html) and [style guide](https://puppet.com/docs/puppet/latest/puppet_strings_style.html)
-
-If you aren't ready to use Strings yet, manually create a REFERENCE.md in the root of your module directory and list out each of your module's classes, defined types, facts, functions, Puppet tasks, task plans, and resource types and providers, along with the parameters for each.
-
-For each element (class, defined type, function, and so on), list:
-
-  * The data type, if applicable.
-  * A description of what the element does.
-  * Valid values, if the data type doesn't make it obvious.
-  * Default value, if any.
-
-For example:
-
+```puppet
+device_manager { 'my-tenant.auth0.com':
+  type        => 'auth0_tenant',
+  credentials => {
+    client_id     => $management_client_id,
+    client_secret => $management_client_secret,
+    domain        => 'my-tenant.auth0.com',
+  },
+}
 ```
-### `pet::cat`
 
-#### Parameters
+The proxy node that is running `puppet device` will need to have the [auth0](https://rubygems.org/gems/auth0) gem installed. The easiest way to set this up is
+to use the [`puppet_gem`](https://puppet.com/docs/puppet/5.5/types/package.html#package-provider-puppet_gem) provider for the `package` resource type:
 
-##### `meow`
+```puppet
+package { 'auth0':
+  ensure   => present,
+  provider => 'puppet_gem', 
+}
+```
 
-Enables vocalization in your cat. Valid options: 'string'.
+To use the `auth0_get_client_credentials` function you will also need the auth0 gem installed on the Puppet Server. The easiest way to set this up is
+with the [puppetlabs-puppetserver_gem](https://forge.puppet.com/puppetlabs/puppetserver_gem) module:
 
-Default: 'medium-loud'.
+```puppet
+package { 'auth0':
+  ensure   => present,
+  provider => 'puppetserver_gem', 
+}
+```
+## Usage - Managing Auth0
+These resource types can be used in a Device context to manage resources via the Auth0 Management API
+
+### Creating a Client (Application)
+```puppet
+auth0_client { 'Example Application':
+  description     => 'An example application to how how to use the auth0 Puppet module.',
+  app_type        => 'non_interactive',
+  callbacks       => ['https://app.example.com/callback'],
+  allowed_origins => ['https://app.example.com'],
+  web_origins     => ['https://app.example.com'],
+}
+```
+
+### Creating a Resource Server (API)
+```puppet
+auth0_resource_server { 'https://api.example.com':
+  display_name => "Example API",
+  signing_alg  => "RS256",
+  scopes       => { 
+    'read:thingies'  => 'Get information about Thingies',
+    'write:thingies' => 'Create, update and destroy Thingies',
+    'read:doodads'   => 'Get information about Doodads',
+  },
+}
+```
+
+### Grant a Client access to a Resource Server with a Client Grant:
+```puppet
+auth0_client_grant { 'Give Example Application access to Example API':
+  client_name => 'Example Application',
+  audience    => 'https://api.example.com':,
+  scopes      => [
+    'read:thingies',
+  ],
+}
+
+# Equivalent to above
+auth0_client_grant { 'Example Application -> https://api.example.com':
+  scopes => [
+    'read:thingies',
+  ],
+}
+```
+
+### Define a Rule
+```puppet
+auth0_rule { 'Example Rule':
+  script => file('profile/auth0/example_rule.js'),
+
+}
+```
+
+## Usage - Querying Auth0
+
+The `auth0_get_client_credentials` function can be used in an Agent or Apply context to
+retrieve information from Auth0 when configuring your own servers and applications.
+
+### Retrieve client credentials for a Machine-to-Machine application
+
+#### With Management API credentials stored in Hiera
+```yaml
+auth0::management_client_id: 'abcdef12345678'
+auth0::management_client_secret: 'abcedfg12313fgasdt235gargq345qrg4423425413543254535'
+auth0::tenant_domain: 'example.auth0.com'
+```
+```puppet
+$credentials = auth0_get_client_credentials('Example Application')
+file { '/etc/example.conf':
+  ensure  => present,
+  content => epp('profile/example/example.conf.epp', {
+    client_id     => $credentials['client_id'],
+    client_secret => $credentials['client_secret'],
+  }),
+}
+```
+
+#### With Management API credentials provided explicitly
+```puppet
+$credentials = auth0_get_client_credentials(
+  'Example Application',
+  'abcdef12345678',
+  'abcedfg12313fgasdt235gargq345qrg4423425413543254535',
+  'example.auth0.com',
+)
+file { '/etc/example.conf':
+  ensure  => present,
+  content => epp('profile/example/example.conf.epp', {
+    client_id     => $credentials['client_id'],
+    client_secret => $credentials['client_secret'],
+  }),
+}
 ```
 
 ## Limitations
+In order for Puppet to operate, every resource needs an identifier which meets two criteria:
+1) It uniquely identifies a specific resource, consistently over time.
+2) It can be specified by the sysadmin when creating the resource.
 
-In the Limitations section, list any incompatibilities, known issues, or other warnings.
+Most Auth0 resource types have a unique identifier which fails the second criterion: for example, the unique identifier for an
+Auth0 Client resource should be its `client_id`, but you can't specify the client_id when creating a resource, so it can't be used as a
+`namevar` in Puppet (and even if you could, you wouldn't really want to).
+
+In order to work around this, we use the Client's `name` attribute for Puppet's `namevar`; however this means you should really treat your
+Application and Rule names as immutable identifiers, even if Auth0 doesn't force you to.
+
+`auth0_resource_server` resources don't have this problem, since the `identifier` (aka 'Audience') attribute of a Resource Server _is_
+an immutable identifier that can be specified when creating the resource.
 
 ## Development
 
-In the Development section, tell other users the ground rules for contributing to your project and how they should submit their work.
-
-## Release Notes/Contributors/Etc. **Optional**
-
-If you aren't using changelog, put your release notes here (though you should consider using changelog). You can also add any additional sections you feel are necessary or important to include here. Please use the `## ` header.
+Development on this is still in the early stages.
