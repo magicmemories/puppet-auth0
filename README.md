@@ -60,7 +60,7 @@ These resource types can be used in a Device context to manage resources via the
 ### Creating a Client (Application)
 ```puppet
 auth0_client { 'Example Application':
-  description     => 'An example application to how how to use the auth0 Puppet module.',
+  description     => 'An example application to show how to use the auth0 Puppet module.',
   app_type        => 'non_interactive',
   callbacks       => ['https://app.example.com/callback'],
   allowed_origins => ['https://app.example.com'],
@@ -103,7 +103,6 @@ auth0_client_grant { 'Example Application -> https://api.example.com':
 ```puppet
 auth0_rule { 'Example Rule':
   script => file('profile/auth0/example_rule.js'),
-
 }
 ```
 
@@ -150,6 +149,7 @@ file { '/etc/example.conf':
 
 ## Limitations
 In order for Puppet to operate, every resource needs an identifier which meets two criteria:
+
 1. It uniquely identifies a specific resource, consistently over time.
 2. It can be specified by the sysadmin when creating the resource.
 
