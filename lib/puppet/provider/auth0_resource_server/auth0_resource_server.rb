@@ -29,7 +29,7 @@ class Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer < Puppet::Resou
     context.notice("Updating '#{identifier}' with #{should.inspect}")
     data = transform_should(should)
     id = CGI.escape(identifier)
-    context.device.patch_resouce_server(id,data)
+    context.device.patch_resource_server(id,data)
   end
 
   def delete(context, name)
@@ -45,7 +45,7 @@ class Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer < Puppet::Resou
   end
 
   def scopes_to_hash(scopes)
-    scopes.each_with_object({}) {|hash,scope| hash[scope['value']] = scope['description'] }
+    scopes.each_with_object({}) {|scope,hash| hash[scope['value']] = scope['description'] }
   end
 
   def hash_to_scopes(hash)
