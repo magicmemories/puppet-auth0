@@ -6,6 +6,7 @@ class Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer < Puppet::Resou
   def get(context)
     apis(context).map do |data|
       {
+        ensure: 'present',
         display_name: data['name'],
         identifier: data['identifier'],
         scopes: scopes_to_hash(data['scopes'] || []),

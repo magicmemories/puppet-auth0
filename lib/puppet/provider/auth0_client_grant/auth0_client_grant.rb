@@ -6,6 +6,7 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
   def get(context)
     client_grants(context).map do |data|
       {
+        ensure: 'present', 
         client_name: get_client_name_by_id(context,data['client_id']),
         audience: data['audience'],
         scopes: data['scope'],
