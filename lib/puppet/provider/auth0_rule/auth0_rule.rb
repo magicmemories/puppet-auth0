@@ -28,7 +28,6 @@ class Puppet::Provider::Auth0Rule::Auth0Rule < Puppet::ResourceApi::SimpleProvid
       'script'  => should[:script],
       'order'   => should[:order],
       'enabled' => should[:enabled],
-      'stage'   => should[:run_stage],
     }.compact
     context.device.update_rule(id,fields_to_update)
   end

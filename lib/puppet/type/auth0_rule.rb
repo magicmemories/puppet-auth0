@@ -28,6 +28,7 @@ Puppet::ResourceApi.register_type(
     run_stage: {
       type: "Optional[Enum['login_success','login_failure','pre_authorize','user_registration','user_blocked']]",
       desc: "The stage at which the rule will be executed.",
+      behavior: :init_only,
       default: 'login_success',
     },
     enabled: {
