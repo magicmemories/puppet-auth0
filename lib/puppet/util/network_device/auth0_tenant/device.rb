@@ -19,7 +19,7 @@ module Puppet::Util::NetworkDevice::Auth0_tenant
     end
 
     def facts
-      { 'operatingsystem' => 'auth0' }
+      { }
     end
 
     def_delegators :@connection, :get, :post, :post_file, :put, :patch, :delete

@@ -1,5 +1,5 @@
 require 'puppet/resource_api/simple_provider'
-require 'puppet/util/network_device/auth0_tenant/device'
+require_relative '../../util/network_device/auth0_tenant/device'
 
 # Implementation for the auth0_resource_server type using the Resource API.
 class Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer < Puppet::ResourceApi::SimpleProvider
