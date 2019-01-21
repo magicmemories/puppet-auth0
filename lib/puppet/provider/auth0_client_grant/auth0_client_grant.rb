@@ -64,8 +64,8 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
   end
 
   def get_client_name_by_id(context,client_id)
-    context.debug("Getting client name for id #{client_id}")
-    context.device.client(client_id)['name']
+    found_client = clients(context).find {|c| c['client_id'] == client_id}
+    found_client ? found_client['name'] : nil
   end
 
 end
