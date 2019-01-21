@@ -38,9 +38,11 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
   end
 
   private
-  # TODO: handle paging
   def client_grants(context)
-    @__client_grants ||= context.device.get_all_client_grants
+    @__client_grants ||= begin
+      context.debug("Getting all client grants")
+      context.device.get_all_client_grants
+    end
   end
 
   def get_client_grant_id(context,client_id,audience)
@@ -49,8 +51,10 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
   end
 
   def clients(context)
-    # TODO: handle paging
-    @__clients ||= context.device.get_clients
+    @__clients ||= begin
+      context.debug("Getting all clients")
+      context.device.get_clients
+    end
   end
 
   def get_client_id_by_name(context,name)
@@ -60,6 +64,7 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
   end
 
   def get_client_name_by_id(context,client_id)
+    context.debug("Getting client name for id #{client_id}")
     context.device.client(client_id)['name']
   end
 
