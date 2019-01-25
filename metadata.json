@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "author": "Adam Gardner",
   "summary": "This module configures resources in Auth0 tennants.",
-  "license": "MPL-2.0",
+  "license": "Apache-2.0",
   "source": "",
   "dependencies": [
 
