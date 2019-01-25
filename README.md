@@ -148,6 +148,8 @@ file { '/etc/example.conf':
 ```
 
 ## Limitations
+
+### Resource Names
 In order for Puppet to operate, every resource needs an identifier which meets two criteria:
 
 1. It uniquely identifies a specific resource, consistently over time.
@@ -162,6 +164,11 @@ Application and Rule names as immutable identifiers, even if Auth0 doesn't force
 
 `auth0_resource_server` resources don't have this problem, since the `identifier` (aka 'Audience') attribute of a Resource Server _is_
 an immutable identifier that can be specified when creating the resource.
+
+### Rate Limiting
+The `ruby-auth0` gem (in which this module is built) doesn't expose enough information during rate-limiting to try dynamically wait out the issue. If rate-limiting
+is encountered during the puppet run, then further resources which make use of the same API endpoints will fail. This module does do some caching to limit the number
+of API requests.
 
 ## Development
 

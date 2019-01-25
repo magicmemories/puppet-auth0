@@ -81,6 +81,11 @@ Puppet::ResourceApi.register_type(
       type: 'Optional[Boolean]',
       desc: 'Whether to disable Single Sign On',
     },
+    client_id: {
+      type: 'String',
+      desc: 'Auth0 server-side unique identifier for Client.',
+      behavior: :read_only,
+    }
     # TODO: Support allowed_clients, jwt_scopes, encryption_key, cross_origin_auth, cross_origin_loc, custom_login_page_on, custom_login_page, custom_login_page_preview, form_template, is_heroku_app, addons, client_metadata, and mobile parameters.
   },
 )

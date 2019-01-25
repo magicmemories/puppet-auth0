@@ -32,17 +32,14 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
 
   def delete(context, name)
     context.notice("Deleting '#{name[:title]}'")
-    client_id = get_client_id_by_name(context,should[:client_name])
-    grant_id = get_client_grant_id(context,client_id,should[:audience])
+    client_id = get_client_id_by_name(context,name[:client_name])
+    grant_id = get_client_grant_id(context,client_id,name[:audience])
     context.device.delete_client_grant(grant_id)
   end
 
   private
   def client_grants(context)
-    @__client_grants ||= begin
-      context.debug("Getting all client grants")
-      context.device.get_all_client_grants
-    end
+    @__client_grants ||= context.device.get_all_client_grants
   end
 
   def get_client_grant_id(context,client_id,audience)
@@ -51,10 +48,7 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
   end
 
   def clients(context)
-    @__clients ||= begin
-      context.debug("Getting all clients")
-      context.device.get_clients
-    end
+    @__clients ||= context.device.get_clients
   end
 
   def get_client_id_by_name(context,name)

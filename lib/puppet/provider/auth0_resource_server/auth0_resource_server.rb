@@ -32,15 +32,14 @@ class Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer < Puppet::Resou
     context.device.patch_resource_server(id,data)
   end
 
-  def delete(context, name)
-    context.notice("Deleting '#{name}'")
+  def delete(context, identifier)
+    context.notice("Deleting '#{identifier}'")
     id = CGI.escape(identifier)
     context.device.delete_resource_server(id)
   end
 
   private
   def apis(context)
-    # TODO: handle paging in responses
     @__apis ||= context.device.get_resource_servers.reject {|c| c['name'] == 'Auth0 Management API' }
   end
 

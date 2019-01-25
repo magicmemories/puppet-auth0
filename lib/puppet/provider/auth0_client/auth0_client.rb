@@ -23,6 +23,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
         sso_disabled: data['sso_disabled'],
         jwt_lifetime_in_seconds: data.dig('jwt_configuration','lifetime_in_seconds'),
         jwt_alg: data.dig('jwt_configuration','alg'),
+        client_id: data['client_id'],
       }
     end
   end
@@ -62,6 +63,6 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
   end
 
   def clients(context)
-    @__clients ||= context.device.connection.get_clients.reject {|c| c['name'] == 'All Applications' }
+    @__clients ||= context.device.clients.reject {|c| c['name'] == 'All Applications' }
   end
 end
