@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'pry'
 
 ensure_module_defined('Puppet::Provider::Auth0Client')
 require 'puppet/provider/auth0_client/auth0_client'
@@ -14,7 +13,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
     allow(context).to receive(:device).and_return(auth0_tenant)
   end
   
-  describe 'get' do
+  describe '#get' do
     let(:base) { attributes_for(:client) }
     let(:api_data) { [build(:client_api,base)] }
     let(:resource_data) { [build(:client_resource,base)] }
@@ -28,7 +27,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
     end
   end
 
-  describe 'create(context, name, should)' do
+  describe '#create(context, name, should)' do
     it 'creates the resource' do
       expect(context).to receive(:notice).with(%r{\ACreating 'a'})
       expect(auth0_tenant).to receive(:create_client).with('a',{name: 'a', app_type: 'spa'})
@@ -37,7 +36,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
     end
   end
 
-  describe 'update(context, name, should)' do
+  describe '#update(context, name, should)' do
     it 'updates the resource' do
       allow(subject).to receive(:get_client_id_by_name).with(context,'foo').and_return('abcd1234')
       expect(context).to receive(:notice).with(%r{\AUpdating 'foo'})
@@ -47,7 +46,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
     end
   end
 
-  describe 'delete(context, name, should)' do
+  describe '#delete(context, name, should)' do
     it 'deletes the resource' do
       allow(subject).to receive(:get_client_id_by_name).with(context,'foo').and_return('abcd1234')
       expect(context).to receive(:notice).with(%r{\ADeleting 'foo'})

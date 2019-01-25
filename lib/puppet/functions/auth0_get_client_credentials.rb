@@ -50,22 +50,22 @@ Puppet::Functions.create_function(:auth0_get_client_credentials) do
     Puppet.info("Querying the Auth0 tenant at #{domain} for clients")
     
     found_clients = api_client.get_clients(fields: ['name','client_id','client_secret']).find_all {|c| c['name'] == client_name }
-    context.warning("Found #{found_clients.count} clients with the name #{name}, choosing the first one.") if found_clients.count > 1
+    Puppet.warning("Found #{found_clients.count} clients with the name #{client_name}, choosing the first one.") if found_clients.count > 1
     client = found_clients.first
     
     if client
       Puppet.debug("Got client data: #{client.inspect}")
       {'client_id' => client['client_id'], 'client_secret' => client['client_secret']}
     else
-      context.warning("No client named #{client_name} found.")
+      Puppet.warning("No client named #{client_name} found.")
       nil
     end
   end
 
   def implicit_query(client_name)
-    management_client_id = call_function('lookup','auth0::management_client_id')
-    management_client_secret = call_function('lookup','auth0::management_client_secret')
-    tenant_domain = call_function('lookup','auth0::tenant_domain')
+    management_client_id = closure_scope.call_function('lookup','auth0::management_client_id')
+    management_client_secret = closure_scope.call_function('lookup','auth0::management_client_secret')
+    tenant_domain = closure_scope.call_function('lookup','auth0::tenant_domain')
     query(client_name,management_client_id,management_client_secret,tenant_domain)
   end
 end

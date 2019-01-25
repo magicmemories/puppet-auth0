@@ -46,7 +46,7 @@ RSpec.describe Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant do
     end
   end
 
-  describe 'create(context, name, should)' do
+  describe '#create(context, name, should)' do
     it 'creates the resource' do
       allow(subject).to receive(:get_client_id_by_name).with(context,'foo').and_return('abcd1234')
       expect(context).to receive(:notice).with(%r{\ACreating 'foo -> bar'})
@@ -56,7 +56,7 @@ RSpec.describe Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant do
     end
   end
 
-  describe 'update(context, name, should)' do
+  describe '#update(context, name, should)' do
     it 'updates the resource' do
       allow(subject).to receive(:get_client_id_by_name).with(context,'foo').and_return('abcd1234')
       allow(subject).to receive(:get_client_grant_id).with(context,'abcd1234','bar').and_return('efgh5678')
@@ -67,7 +67,7 @@ RSpec.describe Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant do
     end
   end
 
-  describe 'delete(context, name, should)' do
+  describe '#delete(context, name, should)' do
     it 'deletes the resource' do
       allow(subject).to receive(:get_client_id_by_name).with(context,'foo').and_return('abcd1234')
       allow(subject).to receive(:get_client_grant_id).with(context,'abcd1234','bar').and_return('efgh5678')

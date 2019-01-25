@@ -48,7 +48,7 @@ RSpec.describe Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer do
     end
   end
 
-  describe 'create(context, name, should)' do
+  describe '#create(context, name, should)' do
     it 'creates the resource' do
       expect(context).to receive(:notice).with(%r{\ACreating 'http://foo.com'})
       expect(auth0_tenant).to receive(:create_resource_server).with('http://foo.com',{name: 'foo'})
@@ -57,7 +57,7 @@ RSpec.describe Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer do
     end
   end
 
-  describe 'update(context, name, should)' do
+  describe '#update(context, name, should)' do
     it 'updates the resource' do
       expect(context).to receive(:notice).with(%r{\AUpdating 'http://foo.com'})
       expect(auth0_tenant).to receive(:patch_resource_server).with('http%3A%2F%2Ffoo.com',{name: 'bar'})
@@ -66,7 +66,7 @@ RSpec.describe Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer do
     end
   end
 
-  describe 'delete(context, name, should)' do
+  describe '#delete(context, name, should)' do
     it 'deletes the resource' do
       expect(context).to receive(:notice).with(%r{\ADeleting 'http://foo.com'})
       expect(auth0_tenant).to receive(:delete_resource_server).with('http%3A%2F%2Ffoo.com')
