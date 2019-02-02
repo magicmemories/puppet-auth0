@@ -32,14 +32,14 @@ module Puppet::Util::NetworkDevice::Auth0_tenant
         page: !page.nil? ? page.to_i : nil,
         per_page: !page.nil? && !per_page.nil? ? per_page.to_i : nil
       }
-      @connection.get(resource_servers_path, request_params)
+      @connection.get(@connection.resource_servers_path, request_params)
     end
     alias get_resource_servers resource_servers
 
     def patch_resource_server(id, options)
       raise Auth0::MissingClientId, 'Must specify a resource server id' if id.to_s.empty?
       raise Auth0::MissingParameter, 'Must specify a valid body' if options.to_s.empty?
-      path = "#{resource_servers_path}/#{id}"
+      path = "#{@connection.resource_servers_path}/#{id}"
       @connection.patch(path, options)
     end
   end
