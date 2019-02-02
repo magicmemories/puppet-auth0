@@ -5,7 +5,8 @@ require 'auth0'
 module Puppet::Util::NetworkDevice::Auth0_tenant
   class Device < Puppet::Util::NetworkDevice::Simple::Device
     extend Forwardable
-    include Auth0::Api::V2
+
+    def_delegators :@connection, *Auth0::Api::V2.instance_methods
 
     attr_reader :connection
     def initialize(*args)
@@ -19,11 +20,11 @@ module Puppet::Util::NetworkDevice::Auth0_tenant
     end
 
     def facts
-      { }
+      { 
+        tenant_domain: config['domain'],
+      }
     end
-
-    def_delegators :@connection, :get, :post, :post_file, :put, :patch, :delete
-
+ 
     # These methods are missing from the Auth0 gem for some reason, a PR is in progress
     # but in the meantime we'll just stick it here.
     def resource_servers(page: nil, per_page: nil)
@@ -31,7 +32,7 @@ module Puppet::Util::NetworkDevice::Auth0_tenant
         page: !page.nil? ? page.to_i : nil,
         per_page: !page.nil? && !per_page.nil? ? per_page.to_i : nil
       }
-      get(resource_servers_path, request_params)
+      @connection.get(resource_servers_path, request_params)
     end
     alias get_resource_servers resource_servers
 
@@ -39,9 +40,7 @@ module Puppet::Util::NetworkDevice::Auth0_tenant
       raise Auth0::MissingClientId, 'Must specify a resource server id' if id.to_s.empty?
       raise Auth0::MissingParameter, 'Must specify a valid body' if options.to_s.empty?
       path = "#{resource_servers_path}/#{id}"
-      patch(path, options)
+      @connection.patch(path, options)
     end
   end
 end
-
-

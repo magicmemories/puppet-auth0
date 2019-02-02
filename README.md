@@ -54,6 +54,11 @@ package { 'auth0':
   provider => 'puppetserver_gem', 
 }
 ```
+
+If you are using this module with Puppet 5, you will need to have access to the [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) gem
+on both your server and agents. You can either do this via `package` resources with the `puppet_gem` and `puppetserver_gem` types as above, or use the 
+[`puppetlabs-resource_api`](https://forge.puppet.com/puppetlabs/resource_api) module to do it for you.
+
 ## Usage - Managing Auth0
 These resource types can be used in a Device context to manage resources via the Auth0 Management API
 
@@ -166,10 +171,32 @@ Application and Rule names as immutable identifiers, even if Auth0 doesn't force
 an immutable identifier that can be specified when creating the resource.
 
 ### Rate Limiting
-The `ruby-auth0` gem (in which this module is built) doesn't expose enough information during rate-limiting to try dynamically wait out the issue. If rate-limiting
+The `ruby-auth0` gem (on which this module is built) doesn't expose enough information during rate-limiting to try dynamically wait out the issue. If rate-limiting
 is encountered during the puppet run, then further resources which make use of the same API endpoints will fail. This module does do some caching to limit the number
 of API requests.
 
+### Missing Features
+Not all aspects of your Auth0 configuration can be managed via their API, not all resource types that _can_ be managed by the API are implemented by this module yet,
+and not all properties of the implemented resource types are supported yet. Specifically, the following properties are not yet supported by this module:
+
+* from the Clients API:
+  * allowed_clients
+  * jwt_configuration.scopes
+  * encryption_key
+  * cross_origin_auth
+  * cross_origin_loc
+  * custom_login_page_on
+  * custom_login_page
+  * custom_login_page_preview
+  * form_template
+  * is_heroku_app
+  * addons
+  * client_metadata
+  * mobile
+* from the ResourceServers API:
+  * verificationLocation
+  * options
+
 ## Development
 
-Development on this is still in the early stages.
+Development on this is still in the early stages. 
