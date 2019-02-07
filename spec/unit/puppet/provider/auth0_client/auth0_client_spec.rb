@@ -57,51 +57,99 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
   end
 
   describe '#canonicalize(context,resources)' do
-    context 'when keep_extra_callbacks is true' do
-      let(:client_is) { attributes_for(:client, {name: 'foo', callbacks: ['https://localhost:8080/callback']}) }
-      let(:client_should) { client_is.merge(keep_extra_callbacks: true, callbacks: ['https://foo.com/callback']) }
-      let(:client_canonical) { client_is.merge(callbacks: ['https://foo.com/callback','https://localhost:8080/callback']) }
+    context 'when keep_extra_callbacks...' do
+      context 'is true' do
+        let(:client_is) { attributes_for(:client, {name: 'foo', callbacks: ['https://localhost:8080/callback']}) }
+        let(:client_should) { client_is.merge(keep_extra_callbacks: true, callbacks: ['https://foo.com/callback']) }
+        let(:client_canonical) { client_is.merge(callbacks: ['https://foo.com/callback','https://localhost:8080/callback']) }
 
-      it 'leaves extra callbacks in place' do
+        it 'leaves extra callbacks in place' do
+          allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
+          expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+        end
+      end
 
-        allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
-        expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+      context 'is false' do
+        let(:client_is) { attributes_for(:client, {name: 'foo', callbacks: ['https://localhost:8080/callback']}) }
+        let(:client_should) { client_is.merge(keep_extra_callbacks: false, callbacks: ['https://foo.com/callback']) }
+        let(:client_canonical) { client_is.merge(callbacks: ['https://foo.com/callback']) }
+
+        it 'removes extra callbacks' do
+          allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
+          expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+        end
       end
     end
 
-    context 'when keep_extra_allowed_origins is true' do
-      let(:client_is) { attributes_for(:client, {name: 'foo', allowed_origins: ['https://localhost:8080']}) }
-      let(:client_should) { client_is.merge(keep_extra_allowed_origins: true, allowed_origins: ['https://foo.com']) }
-      let(:client_canonical) { client_is.merge(allowed_origins: ['https://foo.com','https://localhost:8080']) }
+    context 'when keep_extra_allowed_origins...' do
+      context 'is true' do
+        let(:client_is) { attributes_for(:client, {name: 'foo', allowed_origins: ['https://localhost:8080']}) }
+        let(:client_should) { client_is.merge(keep_extra_allowed_origins: true, allowed_origins: ['https://foo.com']) }
+        let(:client_canonical) { client_is.merge(allowed_origins: ['https://foo.com','https://localhost:8080']) }
 
-      it 'leaves extra allowed_origins in place' do
+        it 'leaves extra allowed_origins in place' do
+          allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
+          expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+        end
+      end
 
-        allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
-        expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+      context 'is false' do
+        let(:client_is) { attributes_for(:client, {name: 'foo', allowed_origins: ['https://localhost:8080']}) }
+        let(:client_should) { client_is.merge(keep_extra_allowed_origins: false, allowed_origins: ['https://foo.com']) }
+        let(:client_canonical) { client_is.merge(allowed_origins: ['https://foo.com']) }
+
+        it 'removes extra allowed_origins' do
+          allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
+          expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+        end
       end
     end
 
-    context 'when keep_extra_web_origins is true' do
-      let(:client_is) { attributes_for(:client, {name: 'foo', web_origins: ['https://localhost:8080']}) }
-      let(:client_should) { client_is.merge(keep_extra_web_origins: true, web_origins: ['https://foo.com']) }
-      let(:client_canonical) { client_is.merge(web_origins: ['https://foo.com','https://localhost:8080']) }
+    context 'when keep_extra_web_origins...' do
+      context 'is true' do
+        let(:client_is) { attributes_for(:client, {name: 'foo', web_origins: ['https://localhost:8080']}) }
+        let(:client_should) { client_is.merge(keep_extra_web_origins: true, web_origins: ['https://foo.com']) }
+        let(:client_canonical) { client_is.merge(web_origins: ['https://foo.com','https://localhost:8080']) }
 
-      it 'leaves extra web_origins in place' do
+        it 'leaves extra web_origins in place' do
+          allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
+          expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+        end
+      end
 
-        allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
-        expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+      context 'is false' do
+        let(:client_is) { attributes_for(:client, {name: 'foo', web_origins: ['https://localhost:8080']}) }
+        let(:client_should) { client_is.merge(keep_extra_web_origins: false, web_origins: ['https://foo.com']) }
+        let(:client_canonical) { client_is.merge(web_origins: ['https://foo.com']) }
+
+        it 'leaves extra web_origins in place' do
+          allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
+          expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+        end
       end
     end
 
-    context 'when keep_extra_allowed_logout_urls is true' do
-      let(:client_is) { attributes_for(:client, {name: 'foo', allowed_logout_urls: ['https://localhost:8080/logged_out']}) }
-      let(:client_should) { client_is.merge(keep_extra_allowed_logout_urls: true, allowed_logout_urls: ['https://foo.com/logged_out']) }
-      let(:client_canonical) { client_is.merge(allowed_logout_urls: ['https://foo.com/logged_out','https://localhost:8080/logged_out']) }
+    context 'when keep_extra_allowed_logout_urls...' do
+      context 'is true' do
+        let(:client_is) { attributes_for(:client, {name: 'foo', allowed_logout_urls: ['https://localhost:8080/logged_out']}) }
+        let(:client_should) { client_is.merge(keep_extra_allowed_logout_urls: true, allowed_logout_urls: ['https://foo.com/logged_out']) }
+        let(:client_canonical) { client_is.merge(allowed_logout_urls: ['https://foo.com/logged_out','https://localhost:8080/logged_out']) }
 
-      it 'leaves extra allowed_logout_urls in place' do
+        it 'leaves extra allowed_logout_urls in place' do
+          allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
+          expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+        end
+      end
 
-        allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
-        expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+      context 'is false' do
+        let(:client_is) { attributes_for(:client, {name: 'foo', allowed_logout_urls: ['https://localhost:8080/logged_out']}) }
+        let(:client_should) { client_is.merge(keep_extra_allowed_logout_urls: false, allowed_logout_urls: ['https://foo.com/logged_out']) }
+        let(:client_canonical) { client_is.merge(allowed_logout_urls: ['https://foo.com/logged_out']) }
+
+        it 'leaves extra allowed_logout_urls in place' do
+          allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
+          expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+        end
       end
     end
   end

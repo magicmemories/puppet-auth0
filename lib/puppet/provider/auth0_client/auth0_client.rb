@@ -57,17 +57,13 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
 
   def canonicalize(context,resources)
     resources.each do |resource|
-      if resource.delete(:keep_extra_callbacks) && resource[:callbacks]
-        resource[:callbacks] += (get_client_by_name(context,resource[:name])&.[]('callbacks') - resource[:callbacks])
-      end
-      if resource.delete(:keep_extra_allowed_origins) && resource[:allowed_origins]
-        resource[:allowed_origins] += (get_client_by_name(context,resource[:name])&.[]('allowed_origins') - resource[:allowed_origins])
-      end
-      if resource.delete(:keep_extra_web_origins) && resource[:web_origins]
-        resource[:web_origins] += (get_client_by_name(context,resource[:name])&.[]('web_origins') - resource[:web_origins])
-      end
-      if resource.delete(:keep_extra_allowed_logout_urls) && resource[:allowed_logout_urls]
-        resource[:allowed_logout_urls] += (get_client_by_name(context,resource[:name])&.[]('allowed_logout_urls') - resource[:allowed_logout_urls])
+      remote_client = get_client_by_name(context,resource[:name])
+      if remote_client
+        %i{callbacks allowed_origins web_origins allowed_logout_urls}.each do |prop|
+          if resource.delete(:"keep_extra_#{prop}") && resource[prop] && remote_client[prop.to_s]
+            resource[prop] += (remote_client[prop.to_s] - resource[prop])
+          end
+        end
       end
     end
   end
