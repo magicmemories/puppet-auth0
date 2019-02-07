@@ -40,7 +40,7 @@ FactoryBot.define do
       keep_extra_callbacks { nil }
       keep_extra_allowed_origins { nil }
       keep_extra_web_origins { nil }
-      keep_extra_allowed_logouot_urls { nil }
+      keep_extra_allowed_logout_urls { nil }
       initialize_with do
         result = {}
         Puppet::Type::Auth0_client.allattrs.each do |prop|
