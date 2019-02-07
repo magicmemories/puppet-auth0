@@ -48,7 +48,15 @@ The URL of the client logo (recommended size: 150x150).
 
 Data type: `Optional[Array[String]]`
 
-A set of URLs that are valid to call back from Auth0 when authenticating users.
+A set of URLs that are valid to call back from Auth0 when authenticating users. To remove all callbacks you must specify an empty array; leaving this undefined will leave existing callbacks untouched.
+
+##### `keep_extra_callbacks`
+
+Data type: `Boolean`
+
+If true, callbacks set in Auth0 but not in puppet will be left in place.
+
+Default value: true
 
 ##### `allowed_origins`
 
@@ -56,11 +64,27 @@ Data type: `Optional[Array[String]]`
 
 A set of URLs that represent valid origins for CORS.
 
+##### `keep_extra_allowed_origins`
+
+Data type: `Boolean`
+
+If true, allowed_origins set in Auth0 but not in puppet will be left in place.
+
+Default value: true
+
 ##### `web_origins`
 
 Data type: `Optional[Array[String]]`
 
 A set of URLs that represents valid web origins for use with web message response mode.
+
+##### `keep_extra_web_origins`
+
+Data type: `Boolean`
+
+If true, web_origins set in Auth0 but not in puppet will be left in place.
+
+Default value: true
 
 ##### `client_aliases`
 
@@ -73,6 +97,14 @@ List of audiences for SAML protocol.
 Data type: `Optional[Array[String]]`
 
 A set of URLs that are valid to redirect to after logout from Auth0
+
+##### `keep_extra_allowed_logout_urls`
+
+Data type: `Boolean`
+
+If true, allowed_logout_urls set in Auth0 but not in puppet will be left in place.
+
+Default value: true
 
 ##### `grant_types`
 
@@ -121,6 +153,12 @@ Whether to use Auth0 instead of the IdP to do single sign on.
 Data type: `Optional[Boolean]`
 
 Whether to disable Single Sign On
+
+##### `client_id`
+
+Data type: `String`
+
+Auth0 server-side unique identifier for Client.
 
 #### Parameters
 

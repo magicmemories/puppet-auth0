@@ -73,6 +73,10 @@ auth0_client { 'Example Application':
 }
 ```
 
+If you pass `keep_extra_callbacks => true`, then callbacks defined in Auth0 but not in Puppet will be retained; otherwise they will be removed.
+This is useful for dev/test tenants in which individual developers may add callbacks on localhost through the dashboard. `keep_extra_allowed_origins`,
+`keep_extra_web_origins` and `keep_extra_logout_urls` function similarly.
+
 ### Creating a Resource Server (API)
 ```puppet
 auth0_resource_server { 'https://api.example.com':
