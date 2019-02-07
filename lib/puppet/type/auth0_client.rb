@@ -39,9 +39,21 @@ Puppet::ResourceApi.register_type(
       type: 'Optional[Array[String]]',
       desc: 'A set of URLs that represent valid origins for CORS.',
     },
+    keep_extra_allowed_origins: {
+      type: 'Boolean',
+      desc: 'If true, allowed_origins set in Auth0 but not in puppet will be left in place.',
+      default: true,
+      behavior: :parameter,
+    },
     web_origins: {
       type: 'Optional[Array[String]]',
       desc: 'A set of URLs that represents valid web origins for use with web message response mode.',
+    },
+    keep_extra_web_origins: {
+      type: 'Boolean',
+      desc: 'If true, web_origins set in Auth0 but not in puppet will be left in place.',
+      default: true,
+      behavior: :parameter,
     },
     client_aliases: {
       type: 'Optional[Array[String]]',
@@ -54,6 +66,12 @@ Puppet::ResourceApi.register_type(
     allowed_logout_urls: {
       type: 'Optional[Array[String]]',
       desc: 'A set of URLs that are valid to redirect to after logout from Auth0',
+    },
+    keep_extra_allowed_logout_urls: {
+      type: 'Boolean',
+      desc: 'If true, allowed_logout_urls set in Auth0 but not in puppet will be left in place.',
+      default: true,
+      behavior: :parameter,
     },
     grant_types: {
       type: 'Optional[Array[String]]',

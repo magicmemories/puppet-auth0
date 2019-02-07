@@ -36,7 +36,6 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     }.compact
     should[:jwt_configuration] = jwt_configuration unless jwt_configuration.empty?
     should.delete(:ensure)
-    should.delete(:purge_callbacks)
     context.device.create_client(name, should)
   end
 
@@ -60,6 +59,15 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     resources.each do |resource|
       if resource.delete(:keep_extra_callbacks) && resource[:callbacks]
         resource[:callbacks] += (get_client_by_name(context,resource[:name])&.[]('callbacks') - resource[:callbacks])
+      end
+      if resource.delete(:keep_extra_allowed_origins) && resource[:allowed_origins]
+        resource[:allowed_origins] += (get_client_by_name(context,resource[:name])&.[]('allowed_origins') - resource[:allowed_origins])
+      end
+      if resource.delete(:keep_extra_web_origins) && resource[:web_origins]
+        resource[:web_origins] += (get_client_by_name(context,resource[:name])&.[]('web_origins') - resource[:web_origins])
+      end
+      if resource.delete(:keep_extra_allowed_logout_urls) && resource[:allowed_logout_urls]
+        resource[:allowed_logout_urls] += (get_client_by_name(context,resource[:name])&.[]('allowed_logout_urls') - resource[:allowed_logout_urls])
       end
     end
   end
