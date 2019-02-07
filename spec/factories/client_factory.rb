@@ -37,10 +37,11 @@ FactoryBot.define do
     end
 
     factory :client_resource do
+      keep_extra_callbacks { nil }
       initialize_with do
         result = {}
         Puppet::Type::Auth0_client.allattrs.each do |prop|
-          result[prop] = attributes[prop] if attributes.has_key?(prop)
+          result[prop] = attributes[prop] unless attributes[prop].nil?
         end
         result[:jwt_alg] = attributes.dig(:jwt_configuration,'alg')
         result[:jwt_lifetime_in_seconds] = attributes.dig(:jwt_configuration,'lifetime_in_seconds')

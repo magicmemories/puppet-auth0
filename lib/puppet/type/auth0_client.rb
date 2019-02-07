@@ -5,7 +5,7 @@ Puppet::ResourceApi.register_type(
   docs: <<-EOS,
       This type provides Puppet with the capabilities to manage Auth0 Client (Application) resources.
     EOS
-  features: ['remote_resource'],
+  features: ['remote_resource','canonicalize'],
   attributes:   {
     ensure:      {
       type:    'Enum[present, absent]',
@@ -27,7 +27,13 @@ Puppet::ResourceApi.register_type(
     },
     callbacks: {
       type: 'Optional[Array[String]]',
-      desc: 'A set of URLs that are valid to call back from Auth0 when authenticating users.',
+      desc: 'A set of URLs that are valid to call back from Auth0 when authenticating users. To remove all callbacks you must specify an empty array; leaving this undefined will leave existing callbacks untouched.',
+    },
+    keep_extra_callbacks: {
+      type: 'Boolean',
+      desc: 'If true, callbacks set in Auth0 but not in puppet will be left in place.',
+      default: true,
+      behavior: :parameter,
     },
     allowed_origins: {
       type: 'Optional[Array[String]]',

@@ -36,6 +36,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     }.compact
     should[:jwt_configuration] = jwt_configuration unless jwt_configuration.empty?
     should.delete(:ensure)
+    should.delete(:purge_callbacks)
     context.device.create_client(name, should)
   end
 
@@ -55,11 +56,23 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     context.device.delete_client(get_client_id_by_name(context,name))
   end
 
+  def canonicalize(context,resources)
+    resources.each do |resource|
+      if resource.delete(:keep_extra_callbacks) && resource[:callbacks]
+        resource[:callbacks] += (get_client_by_name(context,resource[:name])&.[]('callbacks') - resource[:callbacks])
+      end
+    end
+  end
+
   private
   def get_client_id_by_name(context,name)
+    get_client_by_name(context,name)&.[]('client_id')
+  end
+
+  def get_client_by_name(context,name)
     found_clients = clients(context).find_all {|c| c['name'] == name }
     context.warning("Found #{found_clients.count} clients with the name #{name}, choosing the first one.") if found_clients.count > 1
-    found_clients.dig(0,'client_id')
+    found_clients[0]
   end
 
   def clients(context)

@@ -55,4 +55,18 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
       provider.delete(context, 'foo')
     end
   end
+
+  describe '#canonicalize(context,resources)' do
+    context 'when keep_extra_callbacks is true' do
+      let(:client_is) { attributes_for(:client, {name: 'foo', callbacks: ['https://localhost:8080/callback']}) }
+      let(:client_should) { client_is.merge(keep_extra_callbacks: true, callbacks: ['https://foo.com/callback']) }
+      let(:client_canonical) { client_is.merge(callbacks: ['https://foo.com/callback','https://localhost:8080/callback']) }
+
+      it 'leaves extra callbacks in place' do
+
+        allow(subject).to receive(:get_client_by_name).with(context,'foo').and_return(build(:client_api,client_is))
+        expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
+      end
+    end
+  end
 end
