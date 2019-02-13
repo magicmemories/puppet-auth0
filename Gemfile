@@ -33,9 +33,11 @@ group :development do
   gem "puppet-module-posix-dev-r#{minor_version}",     require: false, platforms: [:ruby]
   gem "puppet-module-win-default-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "puppet-module-win-dev-r#{minor_version}",       require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "auth0",                                         require: false
   gem "puppet-strings",                                require: false, git: 'https://github.com/puppetlabs/puppet-strings'
-  gem "factory_bot"
-  gem "faker"
+  gem "factory_bot",                                   require: false
+  gem "faker",                                         require: false
+  gem "puppet-resource_api",                           require: false
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
@@ -46,10 +48,6 @@ hiera_version = ENV['HIERA_GEM_VERSION']
 gems = {}
 
 gems['puppet'] = location_for(puppet_version)
-
-if Gem::Version.new(puppet_version) < Gem::Version.new('6.0.0')
-  gem 'puppet-resource_api'
-end
 
 # If facter or hiera versions have been specified via the environment
 # variables
