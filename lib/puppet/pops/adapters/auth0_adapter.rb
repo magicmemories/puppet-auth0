@@ -1,5 +1,4 @@
 require 'auth0'
-#require 'puppet/pops/adapters'
 
 class Puppet::Pops::Adapters::Auth0Adapter < Puppet::Pops::Adaptable::Adapter
   def initialize

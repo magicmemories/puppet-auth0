@@ -1,11 +1,13 @@
 {
   "name": "philomory-auth0",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "author": "Adam Gardner",
   "summary": "This module configures resources in Auth0 tennants, and provides functions to query information back from Auth0 for building catalogs.",
   "license": "Apache-2.0",
   "source": "https://github.com/philomory/puppet-auth0",
-  "dependencies": [],
+  "dependencies": [
+    
+  ],
   "operatingsystem_support": [
     {
       "operatingsystem": "CentOS",

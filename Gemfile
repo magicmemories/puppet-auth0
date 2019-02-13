@@ -36,7 +36,6 @@ group :development do
   gem "puppet-strings",                                require: false, git: 'https://github.com/puppetlabs/puppet-strings'
   gem "factory_bot"
   gem "faker"
-  gem "pry"
 end
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
@@ -51,8 +50,6 @@ gems['puppet'] = location_for(puppet_version)
 if Gem::Version.new(puppet_version) < Gem::Version.new('6.0.0')
   gem 'puppet-resource_api'
 end
-
-gem 'auth0'
 
 # If facter or hiera versions have been specified via the environment
 # variables

@@ -7,7 +7,8 @@
 3. [Usage - Managing Auth0](#usage---managing-auth0)
 4. [Usage - Querying Auth0](#usage---querying-auth0)
 5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
+6. [License and Authorship](#license-and-authorship)
+7. [Development - Guide for contributing to the module](#development)
 
 ## Description
 
@@ -201,6 +202,21 @@ and not all properties of the implemented resource types are supported yet. Spec
   * verificationLocation
   * options
 
-## Development
+## License and Authorship
 
-Development on this is still in the early stages. 
+This module was authored by Adam Gardner, and is Copyright (c) 2019 Magic Memories. 
+
+It is distributed under the terms of the Apache-2.0 license; see the LICENSE file for details.
+
+## Development
+If you run into any problems, open an [issue](https://github.com/philomory/puppet-auth0/issues) or
+[fork](https://github.com/philomory/puppet-auth0/fork) and open a
+[Pull Request](https://github.com/philomory/puppet-auth0/pulls).
+
+To be able to run the spec suite during development, first install the necessary dependencies:
+
+    bundle install
+
+Then, run the spec suite:
+
+    bundle exec rake spec
