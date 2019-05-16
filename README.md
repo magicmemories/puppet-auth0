@@ -204,7 +204,7 @@ and not all properties of the implemented resource types are supported yet. Spec
 
 ## License and Authorship
 
-This module was authored by Adam Gardner, and is Copyright (c) 2019 Magic Memories. 
+This module was authored by Adam Gardner, and is Copyright (c) 2019 Magic Memories (USA) LLC. 
 
 It is distributed under the terms of the Apache-2.0 license; see the LICENSE file for details.
 
