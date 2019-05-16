@@ -5,9 +5,15 @@ require_relative '../../util/network_device/auth0_tenant/device'
 class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimpleProvider
   def get(context)
     clients(context).map do |data|
+      id = data.dig('client_metadata','puppet_resource_identifier')
+      if id.nil?
+        context.warn("Auth0 Client #{data['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
+        id = "*#{data['client_id']}"
+      end
       {
         ensure: 'present',
-        name: data['name'],
+        puppet_resource_identifier: id,
+        display_name: data['name'],
         description: data['description'],
         app_type: data['app_type'],
         logo_uri: data['logo_uri'],
@@ -36,7 +42,8 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     }.compact
     should[:jwt_configuration] = jwt_configuration unless jwt_configuration.empty?
     should.delete(:ensure)
-    context.device.create_client(name, should)
+    display_name = should.delete(:display_name)
+    context.device.create_client(display_name, should)
   end
 
   def update(context, name, should)
@@ -47,17 +54,17 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     }.compact
     should[:jwt_configuration] = jwt_configuration unless jwt_configuration.empty?
     should.delete(:ensure)
-    context.device.patch_client(get_client_id_by_name(context,name),should)
+    context.device.patch_client(get_client_id_by_puppet_identifier(context,name),should)
   end
 
   def delete(context, name)
     context.notice("Deleting '#{name}'")
-    context.device.delete_client(get_client_id_by_name(context,name))
+    context.device.delete_client(get_client_id_by_puppet_identifier(context,name))
   end
 
   def canonicalize(context,resources)
     resources.each do |resource|
-      remote_client = get_client_by_name(context,resource[:name])
+      remote_client = get_client_by_puppet_identifier(context,resource[:puppet_resource_identifier])
       if remote_client
         %i{callbacks allowed_origins web_origins allowed_logout_urls}.each do |prop|
           if resource.delete(:"keep_extra_#{prop}") && resource[prop] && remote_client[prop.to_s]
@@ -73,9 +80,19 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     get_client_by_name(context,name)&.[]('client_id')
   end
 
+  def get_client_id_by_puppet_identifier(context,id)
+    get_client_by_puppet_identifier(context,id)&.[]('client_id')
+  end
+
   def get_client_by_name(context,name)
     found_clients = clients(context).find_all {|c| c['name'] == name }
     context.warning("Found #{found_clients.count} clients with the name #{name}, choosing the first one.") if found_clients.count > 1
+    found_clients[0]
+  end
+
+  def get_client_by_puppet_identifier(context,id)
+    found_clients = clients(context).find_all {|c| c.dig('client_metadata','puppet_resource_identifier') == id }
+    context.warning("Found #{found_clients.count} clients whose puppet_resource_identifier is #{id}, choosing the first one.") if found_clients.count > 1
     found_clients[0]
   end
 

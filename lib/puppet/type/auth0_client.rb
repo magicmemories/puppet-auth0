@@ -12,10 +12,14 @@ Puppet::ResourceApi.register_type(
       desc:    'Whether this resource should be present or absent on the target system.',
       default: 'present',
     },
-    name:        {
+    puppet_resource_identifier: {
+      type: 'String[255]',
+      desc: 'A unique identifier for this client; stored in the client_metadata hash under the key "puppet_resource_identifier".'
+      behavior: :namevar,
+    },
+    display_name:        {
       type:      'Pattern[/^[^<>]+$/]',
       desc:      'The name of the client (Application). Does not allow "<" or ">".',
-      behaviour: :namevar,
     },
     description: {
       type: 'Optional[String[0,140]]',
