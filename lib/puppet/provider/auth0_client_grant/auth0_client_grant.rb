@@ -7,7 +7,7 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
     client_grants(context).map do |data|
       {
         ensure: 'present', 
-        client_name: get_client_name_by_id(context,data['client_id']),
+        client_resource: get_client_puppet_resource_identifier_by_id(context,data['client_id']),
         audience: data['audience'],
         scopes: data['scope'],
       }
@@ -17,7 +17,7 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
   def create(context, name, should)
     context.notice("Creating '#{name[:title]}' with #{should.inspect}")
     context.device.create_client_grant(
-      client_id: get_client_id_by_name(context,should[:client_name]),
+      client_id: get_client_id_by_puppet_resource_identifier(context,should[:client_resource]),
       audience: should[:audience],
       scope: should[:scopes],
     )
@@ -25,14 +25,14 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
 
   def update(context, name, should)
     context.notice("Updating '#{name[:title]}' with #{should.inspect}")
-    client_id = get_client_id_by_name(context,should[:client_name])
+    client_id = get_client_id_by_puppet_resource_identifier(context,should[:client_resource])
     grant_id = get_client_grant_id(context,client_id,should[:audience])
     context.device.patch_client_grant(grant_id,should[:scopes])
   end
 
   def delete(context, name)
     context.notice("Deleting '#{name[:title]}'")
-    client_id = get_client_id_by_name(context,name[:client_name])
+    client_id = get_client_id_by_puppet_resource_identifier(context,name[:client_resource])
     grant_id = get_client_grant_id(context,client_id,name[:audience])
     context.device.delete_client_grant(grant_id)
   end
@@ -51,15 +51,21 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
     @__clients ||= context.device.get_clients
   end
 
-  def get_client_id_by_name(context,name)
-    found_clients = clients(context).find_all {|c| c['name'] == name }
-    context.warning("Found #{found_clients.count} clients with the name #{name}, choosing the first one.") if found_clients.count > 1
+  def get_client_id_by_puppet_resource_identifier(context,resource_identifier)
+    found_clients = clients(context).find_all {|c| c.dig('client_metada','puppet_resource_identifier') == resource_identifier }
+    context.warning("Found #{found_clients.count} clients whose puppet_resource_identifier is #{resource_identifier}, choosing the first one.") if found_clients.count > 1
     found_clients.dig(0,'client_id')
   end
 
-  def get_client_name_by_id(context,client_id)
-    found_client = clients(context).find {|c| c['client_id'] == client_id}
-    found_client ? found_client['name'] : nil
+  def get_client_puppet_resource_identifier_by_id(context,client_id)
+    if found_client = clients(context).find {|c| c['client_id'] == client_id}
+      if resource_identifier = found_client.dig('client_metadata','puppet_resource_identifier')
+        resource_identifier
+      else
+        context.warning("Auth0 Client #{found_client['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
+        "*#{found_client['client_id']}"
+      end
+    end
   end
 
 end

@@ -13,6 +13,7 @@
 **Functions**
 
 * [`auth0_get_client_credentials`](#auth0_get_client_credentials): Retrieves Client (Application) credentials from the Auth0 Management API.
+* [`auth0_get_client_credentials_by_name`](#auth0_get_client_credentials_by_name): Retrieves Client (Application) credentials from the Auth0 Management API by name.
 
 ## Resource types
 
@@ -31,6 +32,19 @@ Data type: `Enum[present, absent]`
 Whether this resource should be present or absent on the target system.
 
 Default value: present
+
+##### `puppet_resource_identifier`
+
+Data type: `String[255]`
+
+A unique identifier for this client; stored in the client_metadata hash under the key "puppet_resource_identifier".
+
+##### `name`
+
+Data type: `Pattern[/^[^<>]+$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
+
+The name of the client (Application). Does not allow "<" or ">".
 
 ##### `description`
 
@@ -160,19 +174,6 @@ Data type: `String`
 
 Auth0 server-side unique identifier for Client.
 
-#### Parameters
-
-The following parameters are available in the `auth0_client` type.
-
-##### `name`
-
-namevar
-
-Data type: `Pattern[/^[^<>]+$/]`
-_*this data type contains a regex that may not be accurately reflected in generated documentation_
-
-The name of the client (Application). Does not allow "<" or ">".
-
 ### auth0_client_grant
 
 This type provides Puppet with the capabilities to manage client grants.
@@ -207,13 +208,13 @@ Default value: []
 
 The following parameters are available in the `auth0_client_grant` type.
 
-##### `client_name`
+##### `client_resource`
 
 namevar
 
 Data type: `String`
 
-The name of the client application receiving the grant.
+The puppet_resource_identifier of the client application receiving the grant.
 
 ### auth0_resource_server
 
@@ -351,27 +352,29 @@ Type: Ruby 4.x API
 
 Retrieves Client (Application) credentials from the Auth0 Management API.
 
-#### `auth0_get_client_credentials(String $client_name, String $management_client_id, String $management_client_secret, String $tenant_domain)`
+#### `auth0_get_client_credentials(String $puppet_resource_identifier, String $management_client_id, String $management_client_secret, String $tenant_domain)`
 
-Gets client_id and client_secret for a client specified by name.
+Gets client_id and client_secret for a client specified by its
+puppet_resource_identifier.
 
 Returns: `Optional[Credentials]` A Hash with two keys, 'client_id' and 'client_secret', containing
 the credentials for the requested client. Returns Undef if no client with
-the requested name could be found.
+the requested puppet_resource_identifier could be found.
 
 ##### Examples
 
 ###### Retrieving client credentials.
 
 ```puppet
-auth0_get_client_credentials('Example Application',$auth0_id,$auth0_secret,'example.auth0.com')
+auth0_get_client_credentials('example_application',$auth0_id,$auth0_secret,'example.auth0.com')
 ```
 
-##### `client_name`
+##### `puppet_resource_identifier`
 
 Data type: `String`
 
-The name of the client whose credentials will be retrieved
+The puppet_resource_identifier of the client whose credentials will be
+retrieved.
 
 ##### `management_client_id`
 
@@ -391,7 +394,78 @@ Data type: `String`
 
 The Auth0 Domain (Tenant) that is being queried.
 
-#### `auth0_get_client_credentials(String $client_name)`
+#### `auth0_get_client_credentials(String $puppet_resource_identifier)`
+
+Gets client_id and client_secret for a client specified by its
+puppet_resource_identifier. Retrieves credentials for the Auth0 Management
+API from Hiera under the keys 'auth0::management_client_id',
+'auth0::management_client_secret' and 'auth0::tenant_domain'.
+
+Returns: `Optional[Credentials]` A Hash with two keys, 'client_id' and 'client_secret', containing
+the credentials for the requested client. Returns Undef if no client with
+the requested puppet_resource_identifier could be found.
+
+##### Examples
+
+###### Retrieving client credentials.
+
+```puppet
+auth0_get_client_credentials('Example Application')
+```
+
+##### `puppet_resource_identifier`
+
+Data type: `String`
+
+The name of the client whose credentials will be retrieved
+
+### auth0_get_client_credentials_by_name
+
+Type: Ruby 4.x API
+
+Retrieves Client (Application) credentials from the Auth0 Management API by name.
+
+#### `auth0_get_client_credentials_by_name(String $client_name, String $management_client_id, String $management_client_secret, String $tenant_domain)`
+
+Gets client_id and client_secret for a client specified by name.
+
+Returns: `Optional[Credentials]` A Hash with two keys, 'client_id' and 'client_secret', containing
+the credentials for the requested client. Returns Undef if no client with
+the requested name could be found.
+
+##### Examples
+
+###### Retrieving client credentials.
+
+```puppet
+auth0_get_client_credentials_by_name('Example Application',$auth0_id,$auth0_secret,'example.auth0.com')
+```
+
+##### `client_name`
+
+Data type: `String`
+
+The display name of the client whose credentials will be retrieved
+
+##### `management_client_id`
+
+Data type: `String`
+
+The client_id that Puppet should use to access the Auth0 Management API
+
+##### `management_client_secret`
+
+Data type: `String`
+
+The client_secret that Puppet should use to access the Auth0 Management API
+
+##### `tenant_domain`
+
+Data type: `String`
+
+The Auth0 Domain (Tenant) that is being queried.
+
+#### `auth0_get_client_credentials_by_name(String $client_name)`
 
 Gets client_id and client_secret for a client specified by name. Retrieves credentials for the Auth0
 Management API from Hiera under the keys 'auth0::management_client_id', 'auth0::management_client_secret'
@@ -406,7 +480,7 @@ the requested name could be found.
 ###### Retrieving client credentials.
 
 ```puppet
-auth0_get_client_credentials('Example Application')
+auth0_get_client_credentials_by_name('Example Application')
 ```
 
 ##### `client_name`

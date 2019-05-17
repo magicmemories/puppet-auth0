@@ -65,7 +65,8 @@ These resource types can be used in a Device context to manage resources via the
 
 ### Creating a Client (Application)
 ```puppet
-auth0_client { 'Example Application':
+auth0_client { 'example_application':
+  name            => 'Example Application',
   description     => 'An example application to show how to use the auth0 Puppet module.',
   app_type        => 'non_interactive',
   callbacks       => ['https://app.example.com/callback'],
@@ -73,6 +74,8 @@ auth0_client { 'Example Application':
   web_origins     => ['https://app.example.com'],
 }
 ```
+
+For Clients, the resource title will be stored in the `client_metadata` as `puppet_resource_identifier`.
 
 If you pass `keep_extra_callbacks => true`, then callbacks defined in Auth0 but not in Puppet will be retained; otherwise they will be removed.
 This is useful for dev/test tenants in which individual developers may add callbacks on localhost through the dashboard. `keep_extra_allowed_origins`,
@@ -94,15 +97,15 @@ auth0_resource_server { 'https://api.example.com':
 ### Grant a Client access to a Resource Server with a Client Grant:
 ```puppet
 auth0_client_grant { 'Give Example Application access to Example API':
-  client_name => 'Example Application',
-  audience    => 'https://api.example.com':,
-  scopes      => [
+  client_resource => 'example_application',
+  audience        => 'https://api.example.com':,
+  scopes          => [
     'read:thingies',
   ],
 }
 
 # Equivalent to above
-auth0_client_grant { 'Example Application -> https://api.example.com':
+auth0_client_grant { 'example_application -> https://api.example.com':
   scopes => [
     'read:thingies',
   ],
@@ -118,8 +121,13 @@ auth0_rule { 'Example Rule':
 
 ## Usage - Querying Auth0
 
-The `auth0_get_client_credentials` function can be used in an Agent or Apply context to
-retrieve information from Auth0 when configuring your own servers and applications.
+The `auth0_get_client_credentials` `auth0_get_client_credentials_by_name`
+functions can be used in an Agent or Apply context to retrieve information from
+Auth0 when configuring your own servers and applications.
+
+`auth0_get_client_credentials` looks up clients by their
+puppet_resource_identifier, whereas `auth0_get_client_credentials_by_name`
+looks them up by display name.
 
 ### Retrieve client credentials for a Machine-to-Machine application
 
@@ -130,7 +138,7 @@ auth0::management_client_secret: 'abcedfg12313fgasdt235gargq345qrg44234254135432
 auth0::tenant_domain: 'example.auth0.com'
 ```
 ```puppet
-$credentials = auth0_get_client_credentials('Example Application')
+$credentials = auth0_get_client_credentials('example_application')
 file { '/etc/example.conf':
   ensure  => present,
   content => epp('profile/example/example.conf.epp', {
@@ -143,7 +151,7 @@ file { '/etc/example.conf':
 #### With Management API credentials provided explicitly
 ```puppet
 $credentials = auth0_get_client_credentials(
-  'Example Application',
+  'example_application',
   'abcdef12345678',
   'abcedfg12313fgasdt235gargq345qrg4423425413543254535',
   'example.auth0.com',
@@ -169,8 +177,12 @@ Most Auth0 resource types have a unique identifier which fails the second criter
 Auth0 Client resource should be its `client_id`, but you can't specify the client_id when creating a resource, so it can't be used as a
 `namevar` in Puppet (and even if you could, you wouldn't really want to).
 
-In order to work around this, we use the Client's `name` attribute for Puppet's `namevar`; however this means you should really treat your
-Application and Rule names as immutable identifiers, even if Auth0 doesn't force you to.
+In order to work around this for clients we look for a field named `puppet_resource_identifier` in the client's
+`client_metadata` hash, and use that as the `namevar`. This attribute should be treated as unique and immutable,
+even if auth0 doesn't force you to.
+
+Rules don't have anything analogous to `client_metadata`, so we're stuck using the rule's "Display Name" as a namevar. 
+Again, because of this you should treat Rule names as unique and immutable identifiers, even though Auth0 doesn't require you to.
 
 `auth0_resource_server` resources don't have this problem, since the `identifier` (aka 'Audience') attribute of a Resource Server _is_
 an immutable identifier that can be specified when creating the resource.
@@ -196,7 +208,7 @@ and not all properties of the implemented resource types are supported yet. Spec
   * form_template
   * is_heroku_app
   * addons
-  * client_metadata
+  * client_metadata (except for the puppet_resource_identifier)
   * mobile
 * from the ResourceServers API:
   * verificationLocation

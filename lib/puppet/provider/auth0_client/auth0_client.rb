@@ -7,13 +7,13 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     clients(context).map do |data|
       id = data.dig('client_metadata','puppet_resource_identifier')
       if id.nil?
-        context.warn("Auth0 Client #{data['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
+        context.warning("Auth0 Client #{data['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
         id = "*#{data['client_id']}"
       end
       {
         ensure: 'present',
         puppet_resource_identifier: id,
-        display_name: data['name'],
+        name: data['name'],
         description: data['description'],
         app_type: data['app_type'],
         logo_uri: data['logo_uri'],
@@ -34,32 +34,35 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     end
   end
 
-  def create(context, name, should)
-    context.notice("Creating '#{name}' with #{should.inspect}")
+  def create(context, puppet_resource_identifier, should)
+    context.notice("Creating '#{puppet_resource_identifier}' with #{should.inspect}")
     jwt_configuration = {
       lifetime_in_seconds: should.delete(:jwt_lifetime_in_seconds),
       alg: should.delete(:jwt_alg),
     }.compact
     should[:jwt_configuration] = jwt_configuration unless jwt_configuration.empty?
     should.delete(:ensure)
-    display_name = should.delete(:display_name)
-    context.device.create_client(display_name, should)
+    should[:client_metadata] ||= {}
+    should[:client_metadata]['puppet_resource_identifier'] = should.delete(:puppet_resource_identifier)
+    context.device.create_client(should[:name], should)
   end
 
-  def update(context, name, should)
-    context.notice("Updating '#{name}' with #{should.inspect}")
+  def update(context, puppet_resource_identifier, should)
+    context.notice("Updating '#{puppet_resource_identifier}' with #{should.inspect}")
     jwt_configuration = {
       lifetime_in_seconds: should.delete(:jwt_lifetime_in_seconds),
       alg: should.delete(:jwt_alg),
     }.compact
     should[:jwt_configuration] = jwt_configuration unless jwt_configuration.empty?
     should.delete(:ensure)
-    context.device.patch_client(get_client_id_by_puppet_identifier(context,name),should)
+    should.delete(:puppet_resource_identifier)
+    should[:client_metadata]['puppet_resource_identifier'] = puppet_resource_identifier if should.has_key?(:client_metadata)
+    context.device.patch_client(get_client_id_by_puppet_identifier(context,puppet_resource_identifier),should)
   end
 
-  def delete(context, name)
-    context.notice("Deleting '#{name}'")
-    context.device.delete_client(get_client_id_by_puppet_identifier(context,name))
+  def delete(context, puppet_resource_identifier)
+    context.notice("Deleting '#{puppet_resource_identifier}'")
+    context.device.delete_client(get_client_id_by_puppet_identifier(context,puppet_resource_identifier))
   end
 
   def canonicalize(context,resources)

@@ -3,6 +3,7 @@ FactoryBot.define do
     skip_create
 
     name { Faker::App.unique.name } 
+    client_metadata { { 'puppet_resource_identifier' => name.gsub(/\W/,'_').gsub(/_+/,'_')[0,254] } }
     description { Faker::Lorem.paragraph_by_chars(140) }
     client_id { Faker::Internet.unique.password(32,32) }
     client_secret { Faker::Internet.password(64,64,true,true) }
@@ -42,6 +43,7 @@ FactoryBot.define do
         Puppet::Type::Auth0_client.allattrs.each do |prop|
           result[prop] = attributes[prop] unless attributes[prop].nil?
         end
+        result[:puppet_resource_identifier] = attributes.dig(:client_metadata,'puppet_resource_identifier')
         result[:jwt_alg] = attributes.dig(:jwt_configuration,'alg')
         result[:jwt_lifetime_in_seconds] = attributes.dig(:jwt_configuration,'lifetime_in_seconds')
         result[:ensure] = 'present'

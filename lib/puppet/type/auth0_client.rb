@@ -14,10 +14,10 @@ Puppet::ResourceApi.register_type(
     },
     puppet_resource_identifier: {
       type: 'String[255]',
-      desc: 'A unique identifier for this client; stored in the client_metadata hash under the key "puppet_resource_identifier".'
+      desc: 'A unique identifier for this client; stored in the client_metadata hash under the key "puppet_resource_identifier".',
       behavior: :namevar,
     },
-    display_name:        {
+    name:        {
       type:      'Pattern[/^[^<>]+$/]',
       desc:      'The name of the client (Application). Does not allow "<" or ">".',
     },
