@@ -66,7 +66,7 @@ These resource types can be used in a Device context to manage resources via the
 ### Creating a Client (Application)
 ```puppet
 auth0_client { 'example_application':
-  name            => 'Example Application',
+  display_name    => 'Example Application',
   description     => 'An example application to show how to use the auth0 Puppet module.',
   app_type        => 'non_interactive',
   callbacks       => ['https://app.example.com/callback'],

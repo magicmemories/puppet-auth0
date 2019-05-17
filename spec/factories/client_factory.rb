@@ -43,6 +43,7 @@ FactoryBot.define do
         Puppet::Type::Auth0_client.allattrs.each do |prop|
           result[prop] = attributes[prop] unless attributes[prop].nil?
         end
+        result[:display_name] = attributes[:name]
         result[:puppet_resource_identifier] = attributes.dig(:client_metadata,'puppet_resource_identifier')
         result[:jwt_alg] = attributes.dig(:jwt_configuration,'alg')
         result[:jwt_lifetime_in_seconds] = attributes.dig(:jwt_configuration,'lifetime_in_seconds')

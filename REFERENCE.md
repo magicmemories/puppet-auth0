@@ -35,11 +35,11 @@ Default value: present
 
 ##### `puppet_resource_identifier`
 
-Data type: `String[255]`
+Data type: `String[0,255]`
 
 A unique identifier for this client; stored in the client_metadata hash under the key "puppet_resource_identifier".
 
-##### `name`
+##### `display_name`
 
 Data type: `Pattern[/^[^<>]+$/]`
 _*this data type contains a regex that may not be accurately reflected in generated documentation_

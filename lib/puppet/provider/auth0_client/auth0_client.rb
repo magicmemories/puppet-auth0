@@ -13,7 +13,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
       {
         ensure: 'present',
         puppet_resource_identifier: id,
-        name: data['name'],
+        display_name: data['name'],
         description: data['description'],
         app_type: data['app_type'],
         logo_uri: data['logo_uri'],
@@ -36,28 +36,14 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
 
   def create(context, puppet_resource_identifier, should)
     context.notice("Creating '#{puppet_resource_identifier}' with #{should.inspect}")
-    jwt_configuration = {
-      lifetime_in_seconds: should.delete(:jwt_lifetime_in_seconds),
-      alg: should.delete(:jwt_alg),
-    }.compact
-    should[:jwt_configuration] = jwt_configuration unless jwt_configuration.empty?
-    should.delete(:ensure)
-    should[:client_metadata] ||= {}
-    should[:client_metadata]['puppet_resource_identifier'] = should.delete(:puppet_resource_identifier)
-    context.device.create_client(should[:name], should)
+    data = data_hash_from_attributes(should)
+    context.device.create_client(should[:display_name], data)
   end
 
   def update(context, puppet_resource_identifier, should)
     context.notice("Updating '#{puppet_resource_identifier}' with #{should.inspect}")
-    jwt_configuration = {
-      lifetime_in_seconds: should.delete(:jwt_lifetime_in_seconds),
-      alg: should.delete(:jwt_alg),
-    }.compact
-    should[:jwt_configuration] = jwt_configuration unless jwt_configuration.empty?
-    should.delete(:ensure)
-    should.delete(:puppet_resource_identifier)
-    should[:client_metadata]['puppet_resource_identifier'] = puppet_resource_identifier if should.has_key?(:client_metadata)
-    context.device.patch_client(get_client_id_by_puppet_identifier(context,puppet_resource_identifier),should)
+    data = data_hash_from_attributes(should)
+    context.device.patch_client(get_client_id_by_puppet_identifier(context,puppet_resource_identifier),data)
   end
 
   def delete(context, puppet_resource_identifier)
@@ -79,6 +65,36 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
   end
 
   private
+  def data_hash_from_attributes(attrs)
+    data = {
+      'name'                       => attrs[:display_name],
+      'description'                => attrs[:description],
+      'app_type'                   => attrs[:app_type],
+      'logo_uri'                   => attrs[:logo_uri],
+      'oidc_conformant'            => attrs[:oidc_conformant],
+      'callbacks'                  => attrs[:callbacks],
+      'allowed_origins'            => attrs[:allowed_origins],
+      'web_origins'                => attrs[:web_origins],
+      'client_aliases'             => attrs[:client_aliases],
+      'allowed_logout_urls'        => attrs[:allowed_logout_urls],
+      'grant_types'                => attrs[:grant_types],
+      'token_endpoint_auth_method' => attrs[:token_endpoint_auth_method],
+      'sso'                        => attrs[:sso],
+      'sso_disabled'               => attrs[:sso_disabled],
+      'client_metadata'            => {
+        'puppet_resource_identifier' => attrs[:puppet_resource_identifier],
+      },
+    }
+
+    jwt_configuration = {
+      'lifetime_in_seconds' => attrs[:jwt_lifetime_in_seconds],
+      'alg'                 => attrs[:jwt_alg],
+    }.compact
+    data[:jwt_configuration] = jwt_configuration unless jwt_configuration.empty?
+
+    data.compact
+  end
+
   def get_client_id_by_name(context,name)
     get_client_by_name(context,name)&.[]('client_id')
   end

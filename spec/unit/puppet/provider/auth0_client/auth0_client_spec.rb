@@ -27,34 +27,38 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
     end
   end
 
-  describe '#create(context, name, should)' do
+  describe '#create(context, puppet_resource_identifier, should)' do
     it 'creates the resource' do
       expect(context).to receive(:notice).with(%r{\ACreating 'foo_bar'})
-      expect(auth0_tenant).to receive(:create_client).with('Foo',{name: 'Foo', app_type: 'spa', client_metadata: { 'puppet_resource_identifier' => 'foo_bar' }})
+      expect(auth0_tenant).to receive(:create_client).with('Foo', {
+        'name'            => 'Foo',
+        'app_type'        => 'spa',
+        'client_metadata' => {
+          'puppet_resource_identifier' => 'foo_bar',
+        }
+      })
 
-      provider.create(context, 'foo_bar', puppet_resource_identifier: 'foo_bar', name: 'Foo', ensure: 'present', app_type: 'spa')
+      provider.create(context, 'foo_bar', puppet_resource_identifier: 'foo_bar', display_name: 'Foo', ensure: 'present', app_type: 'spa')
     end
   end
 
-  describe '#update(context, name, should)' do
+  describe '#update(context, puppet_resource_identifier, should)' do
     it 'updates the resource' do
       allow(subject).to receive(:get_client_id_by_puppet_identifier).with(context,'foo_bar').and_return('abcd1234')
       expect(context).to receive(:notice).with(%r{\AUpdating 'foo_bar'})
-      expect(auth0_tenant).to receive(:patch_client).with('abcd1234',{name: 'Foo', app_type: 'non_interactive'})
+      expect(auth0_tenant).to receive(:patch_client).with('abcd1234', {
+        'name'            => 'Foo',
+        'app_type'        => 'non_interactive',
+        'client_metadata' => {
+          'puppet_resource_identifier' => 'foo_bar',
+        }
+      })
 
-      provider.update(context, 'foo_bar', puppet_resource_identifier: 'foo_bar', name: 'Foo', ensure: 'present', app_type: 'non_interactive')
-    end
-
-    it 'injects the puppet_resource_identifier if updating client_metadata' do
-      allow(subject).to receive(:get_client_id_by_puppet_identifier).with(context,'foo_bar').and_return('abcd1234')
-      expect(context).to receive(:notice).with(%r{\AUpdating 'foo_bar'})
-      expect(auth0_tenant).to receive(:patch_client).with('abcd1234',{name: 'Foo', app_type: 'non_interactive', client_metadata: { 'example' => 'value', 'puppet_resource_identifier' => 'foo_bar' }})
-
-      provider.update(context, 'foo_bar', puppet_resource_identifier: 'foo_bar', name: 'Foo', ensure: 'present', app_type: 'non_interactive', client_metadata: {'example' => 'value'})
+      provider.update(context, 'foo_bar', puppet_resource_identifier: 'foo_bar', display_name: 'Foo', ensure: 'present', app_type: 'non_interactive')
     end
   end
 
-  describe '#delete(context, name, should)' do
+  describe '#delete(context, puppet_resource_identifier, should)' do
     it 'deletes the resource' do
       allow(subject).to receive(:get_client_id_by_puppet_identifier).with(context,'foo_bar').and_return('abcd1234')
       expect(context).to receive(:notice).with(%r{\ADeleting 'foo_bar'})
