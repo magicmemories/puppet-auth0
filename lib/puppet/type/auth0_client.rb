@@ -13,7 +13,7 @@ Puppet::ResourceApi.register_type(
       default: 'present',
     },
     puppet_resource_identifier: {
-      type: 'String[255]',
+      type: 'String[0,255]',
       desc: 'A unique identifier for this client; stored in the client_metadata hash under the key "puppet_resource_identifier".',
       behavior: :namevar,
     },
