@@ -52,7 +52,7 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
   end
 
   def get_client_id_by_puppet_resource_identifier(context,resource_identifier)
-    found_clients = clients(context).find_all {|c| c.dig('client_metada','puppet_resource_identifier') == resource_identifier }
+    found_clients = clients(context).find_all {|c| c.dig('client_metadata','puppet_resource_identifier') == resource_identifier }
     context.warning("Found #{found_clients.count} clients whose puppet_resource_identifier is #{resource_identifier}, choosing the first one.") if found_clients.count > 1
     found_clients.dig(0,'client_id')
   end
