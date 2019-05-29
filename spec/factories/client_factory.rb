@@ -11,11 +11,11 @@ FactoryBot.define do
     logo_uri { Faker::Internet.url }
     is_first_party { Faker::Boolean.boolean }
     oidc_conformant { Faker::Boolean.boolean }
-    callbacks { Array.new(rand(3)) { Faker::Internet.url } }
-    allowed_origins { Array.new(rand(3)) { Faker::Internet.url } }
-    web_origins { Array.new(rand(3)) { Faker::Internet.url } }
+    callbacks { Array.new(rand(3)) { Faker::Internet.url }.sort }
+    allowed_origins { Array.new(rand(3)) { Faker::Internet.url }.sort }
+    web_origins { Array.new(rand(3)) { Faker::Internet.url }.sort }
     client_aliases { [] }
-    allowed_logout_urls { Array.new(rand(2)) { Faker::Internet.url } }
+    allowed_logout_urls { Array.new(rand(2)) { Faker::Internet.url }.sort }
     jwt_configuration { { "lifetime_in_seconds" => 36000, "alg" => %w{HS256 RS256}.sample } }
     sso { Faker::Boolean.boolean }
     sso_disabled { Faker::Boolean.boolean }
@@ -30,7 +30,7 @@ FactoryBot.define do
         'http://auth0.com/oauth/grant-type/mfa-oob',
         'http://auth0.com/oauth/grant-type/mfa-otp',
         'http://auth0.com/oauth/grant-type/mfa-recovery-code'
-      ].sample(rand(8)+1)
+      ].sample(rand(8)+1).sort
     }
 
     factory :client_api do

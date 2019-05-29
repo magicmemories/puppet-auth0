@@ -34,6 +34,8 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
       %i{callbacks allowed_origins web_origins allowed_logout_urls grant_types}.each do |prop|
         result[prop] = result[prop].sort if result[prop].kind_of?(Array)
       end
+      
+      result
     end
   end
 
