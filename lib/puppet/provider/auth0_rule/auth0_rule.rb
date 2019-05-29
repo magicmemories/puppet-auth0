@@ -18,7 +18,8 @@ class Puppet::Provider::Auth0Rule::Auth0Rule < Puppet::ResourceApi::SimpleProvid
 
   def create(context, name, should)
     context.notice("Creating '#{name}' with #{should.inspect}")
-    context.device.create_rule(name,should[:script],should[:order],should[:enabled],should[:run_stage])
+    result = context.device.create_rule(name,should[:script],should[:order],should[:enabled],should[:run_stage])
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   def update(context, name, should)
@@ -29,13 +30,15 @@ class Puppet::Provider::Auth0Rule::Auth0Rule < Puppet::ResourceApi::SimpleProvid
       'order'   => should[:order],
       'enabled' => should[:enabled],
     }.compact
-    context.device.update_rule(id,fields_to_update)
+    result = context.device.update_rule(id,fields_to_update)
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   def delete(context, name)
     context.notice("Deleting '#{name}'")
     id = get_rule_id_by_name(context,name)
-    context.device.delete_rule(id)
+    result = context.device.delete_rule(id)
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   private

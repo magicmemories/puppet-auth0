@@ -34,7 +34,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
       %i{callbacks allowed_origins web_origins allowed_logout_urls grant_types}.each do |prop|
         result[prop] = result[prop].sort if result[prop].kind_of?(Array)
       end
-      
+
       result
     end
   end
@@ -42,18 +42,21 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
   def create(context, puppet_resource_identifier, should)
     context.notice("Creating '#{puppet_resource_identifier}' with #{should.inspect}")
     data = data_hash_from_attributes(should)
-    context.device.create_client(should[:display_name], data)
+    result = context.device.create_client(should[:display_name], data)
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   def update(context, puppet_resource_identifier, should)
     context.notice("Updating '#{puppet_resource_identifier}' with #{should.inspect}")
     data = data_hash_from_attributes(should)
-    context.device.patch_client(get_client_id_by_puppet_identifier(context,puppet_resource_identifier),data)
+    result = context.device.patch_client(get_client_id_by_puppet_identifier(context,puppet_resource_identifier),data)
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   def delete(context, puppet_resource_identifier)
     context.notice("Deleting '#{puppet_resource_identifier}'")
-    context.device.delete_client(get_client_id_by_puppet_identifier(context,puppet_resource_identifier))
+    result = context.device.delete_client(get_client_id_by_puppet_identifier(context,puppet_resource_identifier))
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   def canonicalize(context,resources)

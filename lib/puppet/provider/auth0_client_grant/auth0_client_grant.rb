@@ -16,25 +16,28 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
 
   def create(context, name, should)
     context.notice("Creating '#{name[:title]}' with #{should.inspect}")
-    context.device.create_client_grant(
+    result = context.device.create_client_grant(
       client_id: get_client_id_by_puppet_resource_identifier(context,should[:client_resource]),
       audience: should[:audience],
       scope: should[:scopes],
     )
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   def update(context, name, should)
     context.notice("Updating '#{name[:title]}' with #{should.inspect}")
     client_id = get_client_id_by_puppet_resource_identifier(context,should[:client_resource])
     grant_id = get_client_grant_id(context,client_id,should[:audience])
-    context.device.patch_client_grant(grant_id,should[:scopes])
+    result = context.device.patch_client_grant(grant_id,should[:scopes])
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   def delete(context, name)
     context.notice("Deleting '#{name[:title]}'")
     client_id = get_client_id_by_puppet_resource_identifier(context,name[:client_resource])
     grant_id = get_client_grant_id(context,client_id,name[:audience])
-    context.device.delete_client_grant(grant_id)
+    result = context.device.delete_client_grant(grant_id)
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   private

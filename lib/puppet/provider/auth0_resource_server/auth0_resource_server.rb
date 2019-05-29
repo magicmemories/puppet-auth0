@@ -22,20 +22,23 @@ class Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer < Puppet::Resou
   def create(context, identifier, should)
     context.notice("Creating '#{identifier}' with #{should.inspect}")
     data = transform_should(should)
-    context.device.create_resource_server(identifier,data)
+    result = context.device.create_resource_server(identifier,data)
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   def update(context, identifier, should)
     context.notice("Updating '#{identifier}' with #{should.inspect}")
     data = transform_should(should)
     id = CGI.escape(identifier)
-    context.device.patch_resource_server(id,data)
+    result = context.device.patch_resource_server(id,data)
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   def delete(context, identifier)
     context.notice("Deleting '#{identifier}'")
     id = CGI.escape(identifier)
-    context.device.delete_resource_server(id)
+    result = context.device.delete_resource_server(id)
+    Puppet.debug("Got response: #{result.inspect}")
   end
 
   private
