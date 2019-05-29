@@ -42,6 +42,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
   def create(context, puppet_resource_identifier, should)
     context.notice("Creating '#{puppet_resource_identifier}' with #{should.inspect}")
     data = data_hash_from_attributes(should)
+    Puppet.debug("creating client with data: #{data}")
     result = context.device.create_client(should[:display_name], data)
     Puppet.debug("Got response: #{result.inspect}")
   end

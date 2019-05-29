@@ -36,7 +36,7 @@ Puppet::ResourceApi.register_type(
     keep_extra_callbacks: {
       type: 'Boolean',
       desc: 'If true, callbacks set in Auth0 but not in puppet will be left in place.',
-      default: true,
+      default: false,
       behavior: :parameter,
     },
     allowed_origins: {
@@ -46,7 +46,7 @@ Puppet::ResourceApi.register_type(
     keep_extra_allowed_origins: {
       type: 'Boolean',
       desc: 'If true, allowed_origins set in Auth0 but not in puppet will be left in place.',
-      default: true,
+      default: false,
       behavior: :parameter,
     },
     web_origins: {
@@ -56,7 +56,7 @@ Puppet::ResourceApi.register_type(
     keep_extra_web_origins: {
       type: 'Boolean',
       desc: 'If true, web_origins set in Auth0 but not in puppet will be left in place.',
-      default: true,
+      default: false,
       behavior: :parameter,
     },
     client_aliases: {
@@ -74,7 +74,7 @@ Puppet::ResourceApi.register_type(
     keep_extra_allowed_logout_urls: {
       type: 'Boolean',
       desc: 'If true, allowed_logout_urls set in Auth0 but not in puppet will be left in place.',
-      default: true,
+      default: false,
       behavior: :parameter,
     },
     grant_types: {
