@@ -10,7 +10,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
         context.warning("Auth0 Client #{data['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
         id = "*#{data['client_id']}"
       end
-      {
+      result = {
         ensure: 'present',
         puppet_resource_identifier: id,
         display_name: data['name'],
@@ -31,6 +31,9 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
         jwt_alg: data.dig('jwt_configuration','alg'),
         client_id: data['client_id'],
       }
+      %i{callbacks allowed_origins web_origins allowed_logout_urls grant_types}.each do |prop|
+        result[prop] = result[prop].sort if result[prop].kind_of?(Array)
+      end
     end
   end
 
@@ -60,6 +63,9 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
             resource[prop] += (remote_client[prop.to_s] - resource[prop])
           end
         end
+      end
+      %i{callbacks allowed_origins web_origins allowed_logout_urls grant_types}.each do |prop|
+        resource[prop] = resource[prop].sort if resource[prop].kind_of?(Array)
       end
     end
   end
