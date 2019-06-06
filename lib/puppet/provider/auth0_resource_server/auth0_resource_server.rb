@@ -43,7 +43,7 @@ class Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer < Puppet::Resou
 
   private
   def apis(context)
-    @__apis ||= context.device.get_resource_servers.reject {|c| c['name'] == 'Auth0 Management API' }
+    @__apis ||= context.device.get_resource_servers.reject {|c| c['is_system'] }
   end
 
   def scopes_to_hash(scopes)

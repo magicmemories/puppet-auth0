@@ -128,6 +128,6 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
   end
 
   def clients(context)
-    @__clients ||= context.device.clients.reject {|c| c['name'] == 'All Applications' }
+    @__clients ||= context.device.clients.reject {|c| c['is_global'] }
   end
 end
