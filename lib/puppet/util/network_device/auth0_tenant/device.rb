@@ -22,6 +22,7 @@ module Puppet::Util::NetworkDevice::Auth0_tenant
     def facts
       { 
         tenant_domain: config['domain'],
+        management_client_id: config['client_id'],
       }
     end
  
