@@ -51,7 +51,7 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
   end
 
   def clients(context)
-    @__clients ||= context.device.get_clients.reject {|c| c['is_global'] }
+    @__clients ||= context.device.get_clients.reject {|c| c['global'] }
   end
 
   def get_client_id_by_puppet_resource_identifier(context,resource_identifier)
