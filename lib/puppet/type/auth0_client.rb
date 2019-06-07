@@ -1,4 +1,5 @@
 require 'puppet/resource_api'
+require 'puppetx/resource_api'
 
 Puppet::ResourceApi.register_type(
   name: 'auth0_client',

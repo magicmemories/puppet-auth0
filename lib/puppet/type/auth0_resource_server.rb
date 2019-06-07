@@ -1,4 +1,11 @@
 require 'puppet/resource_api'
+require 'puppetx/resource_api'
+
+class Puppet::ResourceApi::ResourceShim
+  def to_hash
+    values.dup
+  end
+end
 
 Puppet::ResourceApi.register_type(
   name: 'auth0_resource_server',
