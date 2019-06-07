@@ -3,15 +3,6 @@ require_relative '../../util/network_device/auth0_tenant/device'
 
 # Implementation for the auth0_client_grant type using the Resource API.
 class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi::SimpleProvider
-  def prefetch(resources)
-    items = instances
-    resources.each_pair do |name,resource|
-      if provider = items.find { |item| item.name == name.to_s }
-        resource.provider = provider
-      end
-    end
-  end
-
   def get(context)
     client_grants(context).map do |data|
       {

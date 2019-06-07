@@ -3,19 +3,11 @@ require_relative '../../util/network_device/auth0_tenant/device'
 
 # Implementation for the auth0_client type using the Resource API.
 class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimpleProvider
-  def prefetch(resources)
-    items = instances
-    resources.each_pair do |name,resource|
-      if provider = items.find { |item| item.name == name.to_s }
-        resource.provider = provider
-      end
-    end
-  end
-
   def get(context)
     clients(context).map do |data|
       id = data.dig('client_metadata','puppet_resource_identifier')
       if id.nil?
+        context.debug(caller.inspect)
         context.warning("Auth0 Client #{data['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
         id = "*#{data['client_id']}"
       end
