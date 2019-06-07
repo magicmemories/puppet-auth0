@@ -140,7 +140,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     @already_warned ||= {}
     unless @already_warned.has_key?(name)
       @already_warned[name] = true
-      context.warning("Auth0 Client #{data['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
+      context.warning("Auth0 Client #{name} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
     end
   end
 end
