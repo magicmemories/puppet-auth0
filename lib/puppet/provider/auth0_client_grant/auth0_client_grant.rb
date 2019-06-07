@@ -59,9 +59,16 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
   end
 
   def get_client_id_by_puppet_resource_identifier(context,resource_identifier)
-    found_clients = clients(context).find_all {|c| c.dig('client_metadata','puppet_resource_identifier') == resource_identifier }
-    context.warning("Found #{found_clients.count} clients whose puppet_resource_identifier is #{resource_identifier}, choosing the first one.") if found_clients.count > 1
-    found_clients.dig(0,'client_id')
+    if resource_identifier =~ /^\*/
+      # This is a "dummy" resource identifier that is actually a client_id, for an existing
+      # client without any resource identifier in the metadata.
+      resource_identifier[1..-1]
+    else
+      # This is a real resource identifier and we should look it up in the client metadata.
+      found_clients = clients(context).find_all {|c| c.dig('client_metadata','puppet_resource_identifier') == resource_identifier }
+      context.warning("Found #{found_clients.count} clients whose puppet_resource_identifier is #{resource_identifier}, choosing the first one.") if found_clients.count > 1
+      found_clients.dig(0,'client_id')
+    end
   end
 
   def get_client_puppet_resource_identifier_by_id(context,client_id)
