@@ -37,6 +37,11 @@ Puppet::ResourceApi.register_type(
       desc: 'The scopes being granted to the client application.',
       default: [],
     },
+    client_id: {
+      type: 'String',
+      desc: 'Auth0 server-side unique identifier for Client.',
+      behavior: :read_only,
+    },
   },
   autorequire: {
     auth0_client: '$client_resource',

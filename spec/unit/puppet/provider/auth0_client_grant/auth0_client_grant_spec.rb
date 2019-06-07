@@ -61,7 +61,7 @@ RSpec.describe Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant do
       allow(subject).to receive(:get_client_id_by_puppet_resource_identifier).with(context,'foo').and_return('abcd1234')
       allow(subject).to receive(:get_client_grant_id).with(context,'abcd1234','bar').and_return('efgh5678')
       expect(context).to receive(:notice).with(%r{\AUpdating 'foo -> bar'})
-      expect(auth0_tenant).to receive(:patch_client_grant).with('efgh5678', ['foo:bar'])
+      expect(auth0_tenant).to receive(:patch_client_grant).with('efgh5678', {'scopes' => ['foo:bar']})
 
       provider.update(context, {title: 'foo -> bar', client_resource: 'foo', audience: 'bar'}, client_resource: 'foo', audience: 'bar', scopes: ['foo:bar'], ensure: 'present')
     end

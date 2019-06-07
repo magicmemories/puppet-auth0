@@ -10,6 +10,7 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
         client_resource: get_client_puppet_resource_identifier_by_id(context,data['client_id']),
         audience: data['audience'],
         scopes: data['scope'],
+        client_id: data['client_id'],
       }
     end
   end
@@ -28,7 +29,7 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
     context.notice("Updating '#{name[:title]}' with #{should.inspect}")
     client_id = get_client_id_by_puppet_resource_identifier(context,should[:client_resource])
     grant_id = get_client_grant_id(context,client_id,should[:audience])
-    result = context.device.patch_client_grant(grant_id,should[:scopes])
+    result = context.device.patch_client_grant(grant_id,scope: should[:scopes])
     Puppet.debug("Got response: #{result.inspect}")
   end
 
