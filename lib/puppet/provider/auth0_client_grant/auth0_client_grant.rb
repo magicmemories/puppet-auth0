@@ -5,10 +5,13 @@ require_relative '../../util/network_device/auth0_tenant/device'
 class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi::SimpleProvider
   def get(context)
     client_grants(context).map do |data|
+      res = get_client_puppet_resource_identifier_by_id(context,data['client_id'])
+      aud = data['audience'] 
       {
+        title: "#{res} -> #{aud}",
         ensure: 'present', 
-        client_resource: get_client_puppet_resource_identifier_by_id(context,data['client_id']),
-        audience: data['audience'],
+        client_resource: res,
+        audience: aud,
         scopes: data['scope'],
         client_id: data['client_id'],
       }
