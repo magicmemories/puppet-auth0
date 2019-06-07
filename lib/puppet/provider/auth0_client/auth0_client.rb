@@ -8,6 +8,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
       id = data.dig('client_metadata','puppet_resource_identifier')
       if id.nil?
         context.debug(caller.inspect)
+        context.debug(self.inspect)
         context.warning("Auth0 Client #{data['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
         id = "*#{data['client_id']}"
       end
