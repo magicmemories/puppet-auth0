@@ -1,5 +1,6 @@
 require 'puppet/resource_api/simple_provider'
 require_relative '../../util/network_device/auth0_tenant/device'
+require 'pry'
 
 # Implementation for the auth0_client type using the Resource API.
 class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimpleProvider
@@ -8,7 +9,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
       id = data.dig('client_metadata','puppet_resource_identifier')
       if id.nil?
         context.debug(caller.inspect)
-        context.debug(self.inspect)
+        binding.pry
         context.warning("Auth0 Client #{data['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
         id = "*#{data['client_id']}"
       end
@@ -130,6 +131,10 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
   end
 
   def clients(context)
+    self.class.clients(context)
+  end
+
+  def self.clients(context)
     @__clients ||= context.device.clients.reject {|c| c['global'] }
   end
 end
