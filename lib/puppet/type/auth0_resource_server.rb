@@ -1,5 +1,4 @@
 require 'puppet/resource_api'
-require 'puppet/util/resource_api_monkey_patch'
 
 class Puppet::ResourceApi::ResourceShim
   def to_hash

@@ -1,5 +1,4 @@
 require 'puppet/resource_api'
-require 'puppet/util/resource_api_monkey_patch'
 
 Puppet::ResourceApi.register_type(
   name: 'auth0_rule',
