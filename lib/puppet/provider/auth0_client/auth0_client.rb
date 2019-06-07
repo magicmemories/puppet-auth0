@@ -1,6 +1,5 @@
 require 'puppet/resource_api/simple_provider'
 require_relative '../../util/network_device/auth0_tenant/device'
-require 'pry'
 
 # Implementation for the auth0_client type using the Resource API.
 class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimpleProvider
@@ -8,9 +7,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     clients(context).map do |data|
       id = data.dig('client_metadata','puppet_resource_identifier')
       if id.nil?
-        context.debug(caller.inspect)
-        binding.pry
-        context.warning("Auth0 Client #{data['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
+        self.class.warn_about(data['name'],context)
         id = "*#{data['client_id']}"
       end
       result = {
@@ -136,5 +133,14 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
 
   def self.clients(context)
     @__clients ||= context.device.clients.reject {|c| c['global'] }
+  end
+
+  # Work around for https://tickets.puppetlabs.com/browse/PDK-1234
+  def self.warn_about(name,context)
+    @already_warned ||= {}
+    unless @already_warned.has_key?(name)
+      @already_warned[name] = true
+      context.warning("Auth0 Client #{data['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
+    end
   end
 end

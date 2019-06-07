@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'puppet/pops/adapters/auth0_adapter'
-require 'pry'
 
 RSpec.describe 'auth0_get_client_credentials_by_name' do
   let(:management_client_id) { 'management_id' }
