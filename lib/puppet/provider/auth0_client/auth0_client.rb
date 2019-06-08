@@ -112,7 +112,14 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
   end
 
   def get_client_id_by_puppet_identifier(context,id)
-    get_client_by_puppet_identifier(context,id)&.[]('client_id')
+    if id =~ /^\*/
+      # This is a "dummy" resource identifier that is actually a client_id, for an existing
+      # client without any resource identifier in the metadata.
+      id[1..-1]
+    else
+      # This is a real resource identifier and we should look it up in the client metadata.
+      get_client_by_puppet_identifier(context,id)&.[]('client_id')
+    end
   end
 
   def get_client_by_name(context,name)
