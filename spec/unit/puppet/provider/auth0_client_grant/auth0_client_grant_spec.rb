@@ -4,7 +4,7 @@ ensure_module_defined('Puppet::Provider::Auth0ClientGrant')
 require 'puppet/provider/auth0_client_grant/auth0_client_grant'
 
 RSpec.describe Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant do
-  subject(:provider) { described_class.new }
+  subject(:provider) { Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant.new }
 
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
   let(:auth0_tenant) { instance_double('Puppet::Util::NetworkDevice::Auth0_tenant::Device', 'auth0_tenant') }

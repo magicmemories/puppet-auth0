@@ -1,10 +1,11 @@
 require 'spec_helper'
+require 'pry'
 
 ensure_module_defined('Puppet::Provider::Auth0Client')
 require 'puppet/provider/auth0_client/auth0_client'
 
 RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
-  subject(:provider) { described_class.new }
+  subject(:provider) { Puppet::Provider::Auth0Client::Auth0Client.new }
 
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
   let(:auth0_tenant) { instance_double('Puppet::Util::NetworkDevice::Auth0_tenant::Device', 'auth0_tenant') }
@@ -17,6 +18,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
     let(:base) { attributes_for(:client) }
     let(:api_data) { [build(:client_api,base)] }
     let(:resource_data) { [build(:client_resource,base)] }
+    let(:get_response) { api_data }
 
     before(:each) do
       allow(auth0_tenant).to receive(:clients).and_return(api_data)
@@ -24,6 +26,15 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
 
     it 'returns appropriate data struct' do
       expect(provider.get(context)).to eq(resource_data)
+    end
+
+    context "when a client doesn't have a puppet_resource_identifier" do
+      let(:base) { attributes_for(:client).tap {|attrs| attrs[:client_metadata].delete('puppet_resource_identifier') } }
+      
+      it 'warns about missing identifier and uses client_id instead' do
+        expect(context).to receive(:warning).with(%r{does not have a puppet_resource_identifier in its metadata})
+        expect(provider.get(context)).to include(a_hash_including(puppet_resource_identifier: "*#{base[:client_id]}"))
+      end
     end
   end
 
@@ -44,7 +55,12 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
 
   describe '#update(context, puppet_resource_identifier, should)' do
     it 'updates the resource' do
-      allow(subject).to receive(:get_client_id_by_puppet_identifier).with(context,'foo_bar').and_return('abcd1234')
+      allow(auth0_tenant).to receive(:clients).and_return(build_list(:client_api,1,{
+        client_id: 'abcd1234',
+        client_metadata: {
+          'puppet_resource_identifier' => 'foo_bar',
+        }
+      }))
       expect(context).to receive(:notice).with(%r{\AUpdating 'foo_bar'})
       expect(auth0_tenant).to receive(:patch_client).with('abcd1234', {
         'name'            => 'Foo',
@@ -60,15 +76,37 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
 
   describe '#delete(context, puppet_resource_identifier, should)' do
     it 'deletes the resource' do
-      allow(subject).to receive(:get_client_id_by_puppet_identifier).with(context,'foo_bar').and_return('abcd1234')
+      allow(auth0_tenant).to receive(:clients).and_return(build_list(:client_api,1,{
+        client_id: 'abcd1234',
+        client_metadata: {
+          'puppet_resource_identifier' => 'foo_bar',
+        }
+      }))
       expect(context).to receive(:notice).with(%r{\ADeleting 'foo_bar'})
       expect(auth0_tenant).to receive(:delete_client).with('abcd1234')
 
       provider.delete(context, 'foo_bar')
     end
+
+    # This is mostly used for purging unmanaged resources
+    it 'can delete an identifierless resource' do
+      allow(auth0_tenant).to receive(:clients).and_return(build_list(:client_api,1,{
+        client_id: 'abcd1234',
+        client_metadata: {}
+      }))
+      expect(context).to receive(:notice).with(%r{\ADeleting '\*abcd1234'})
+      expect(auth0_tenant).to receive(:delete_client).with('abcd1234')
+
+      provider.delete(context, '*abcd1234')
+    end
+      
   end
 
   describe '#canonicalize(context,resources)' do
+    before(:each) do
+      allow(subject).to receive(:get_client_by_puppet_identifier).with(context,'foo').and_return(build(:client_api,client_is))
+    end
+
     context 'when keep_extra_callbacks...' do
       context 'is true' do
         let(:client_is) { attributes_for(:client, {name: 'foo', callbacks: ['https://localhost:8080/callback']}) }
@@ -76,7 +114,6 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(callbacks: ['https://foo.com/callback','https://localhost:8080/callback']) }
 
         it 'leaves extra callbacks in place' do
-          allow(subject).to receive(:get_client_by_puppet_identifier).with(context,'foo').and_return(build(:client_api,client_is))
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end
@@ -87,7 +124,6 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(callbacks: ['https://foo.com/callback']) }
 
         it 'removes extra callbacks' do
-          allow(subject).to receive(:get_client_by_puppet_identifier).with(context,'foo').and_return(build(:client_api,client_is))
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end
@@ -100,7 +136,6 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(allowed_origins: ['https://foo.com','https://localhost:8080']) }
 
         it 'leaves extra allowed_origins in place' do
-          allow(subject).to receive(:get_client_by_puppet_identifier).with(context,'foo').and_return(build(:client_api,client_is))
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end
@@ -111,7 +146,6 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(allowed_origins: ['https://foo.com']) }
 
         it 'removes extra allowed_origins' do
-          allow(subject).to receive(:get_client_by_puppet_identifier).with(context,'foo').and_return(build(:client_api,client_is))
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end
@@ -124,7 +158,6 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(web_origins: ['https://foo.com','https://localhost:8080']) }
 
         it 'leaves extra web_origins in place' do
-          allow(subject).to receive(:get_client_by_puppet_identifier).with(context,'foo').and_return(build(:client_api,client_is))
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end
@@ -135,7 +168,6 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(web_origins: ['https://foo.com']) }
 
         it 'leaves extra web_origins in place' do
-          allow(subject).to receive(:get_client_by_puppet_identifier).with(context,'foo').and_return(build(:client_api,client_is))
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end
@@ -148,7 +180,6 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(allowed_logout_urls: ['https://foo.com/logged_out','https://localhost:8080/logged_out']) }
 
         it 'leaves extra allowed_logout_urls in place' do
-          allow(subject).to receive(:get_client_by_puppet_identifier).with(context,'foo').and_return(build(:client_api,client_is))
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end
@@ -159,7 +190,6 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(allowed_logout_urls: ['https://foo.com/logged_out']) }
 
         it 'leaves extra allowed_logout_urls in place' do
-          allow(subject).to receive(:get_client_by_puppet_identifier).with(context,'foo').and_return(build(:client_api,client_is))
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end

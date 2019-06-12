@@ -4,7 +4,7 @@ ensure_module_defined('Puppet::Provider::Auth0ResourceServer')
 require 'puppet/provider/auth0_resource_server/auth0_resource_server'
 
 RSpec.describe Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer do
-  subject(:provider) { described_class.new }
+  subject(:provider) { Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer.new }
 
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
   let(:auth0_tenant) { instance_double('Puppet::Util::NetworkDevice::Auth0_tenant::Device', 'auth0_tenant') }
@@ -55,6 +55,20 @@ RSpec.describe Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer do
 
       provider.create(context, 'http://foo.com', display_name: 'foo', ensure: 'present')
     end
+
+    it 'creates resources with scopes correctly' do
+      expect(context).to receive(:notice).with(%r{\ACreating 'http://foo.com'})
+      expect(auth0_tenant).to receive(:create_resource_server).with('http://foo.com',{
+        name: 'foo',
+        scopes: [{ 'value' => 'read:foo', 'description' => 'Read access to Foo'}],
+      })
+
+      provider.create(context, 'http://foo.com', {
+        display_name: 'foo',
+        ensure: 'present',
+        scopes: { 'read:foo' => 'Read access to Foo'},
+      })
+    end
   end
 
   describe '#update(context, name, should)' do
@@ -62,7 +76,21 @@ RSpec.describe Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer do
       expect(context).to receive(:notice).with(%r{\AUpdating 'http://foo.com'})
       expect(auth0_tenant).to receive(:patch_resource_server).with('http%3A%2F%2Ffoo.com',{name: 'bar'})
 
-      provider.update(context, 'http://foo.com', name: 'bar', ensure: 'present')
+      provider.update(context, 'http://foo.com', display_name: 'bar', ensure: 'present')
+    end
+
+    it 'handles updating scopes correctly' do
+      expect(context).to receive(:notice).with(%r{\AUpdating 'http://foo.com'})
+      expect(auth0_tenant).to receive(:patch_resource_server).with('http%3A%2F%2Ffoo.com',{
+        scopes: [
+          { 'value' => 'read:foo',  'description' => 'Read access to Foo'  },
+          { 'value' => 'write:foo', 'description' => 'Write access to Foo' },
+        ]
+      })
+      provider.update(context, 'http://foo.com', scopes: {
+        'read:foo'  => 'Read access to Foo',
+        'write:foo' => 'Write access to Foo' ,
+      })
     end
   end
 

@@ -107,10 +107,6 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     data.compact
   end
 
-  def get_client_id_by_name(context,name)
-    get_client_by_name(context,name)&.[]('client_id')
-  end
-
   def get_client_id_by_puppet_identifier(context,id)
     if id =~ /^\*/
       # This is a "dummy" resource identifier that is actually a client_id, for an existing
@@ -122,12 +118,6 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
     end
   end
 
-  def get_client_by_name(context,name)
-    found_clients = clients(context).find_all {|c| c['name'] == name }
-    context.warning("Found #{found_clients.count} clients with the name #{name}, choosing the first one.") if found_clients.count > 1
-    found_clients[0]
-  end
-
   def get_client_by_puppet_identifier(context,id)
     found_clients = clients(context).find_all {|c| c.dig('client_metadata','puppet_resource_identifier') == id }
     context.warning("Found #{found_clients.count} clients whose puppet_resource_identifier is #{id}, choosing the first one.") if found_clients.count > 1
@@ -135,10 +125,6 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
   end
 
   def clients(context)
-    self.class.clients(context)
-  end
-
-  def self.clients(context)
     @__clients ||= context.device.clients.reject {|c| c['global'] }
   end
 
