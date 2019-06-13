@@ -70,8 +70,6 @@ Data type: `Boolean`
 
 If true, callbacks set in Auth0 but not in puppet will be left in place.
 
-Default value: true
-
 ##### `allowed_origins`
 
 Data type: `Optional[Array[String]]`
@@ -84,8 +82,6 @@ Data type: `Boolean`
 
 If true, allowed_origins set in Auth0 but not in puppet will be left in place.
 
-Default value: true
-
 ##### `web_origins`
 
 Data type: `Optional[Array[String]]`
@@ -97,8 +93,6 @@ A set of URLs that represents valid web origins for use with web message respons
 Data type: `Boolean`
 
 If true, web_origins set in Auth0 but not in puppet will be left in place.
-
-Default value: true
 
 ##### `client_aliases`
 
@@ -117,8 +111,6 @@ A set of URLs that are valid to redirect to after logout from Auth0
 Data type: `Boolean`
 
 If true, allowed_logout_urls set in Auth0 but not in puppet will be left in place.
-
-Default value: true
 
 ##### `grant_types`
 
@@ -203,6 +195,12 @@ Data type: `Array[String]`
 The scopes being granted to the client application.
 
 Default value: []
+
+##### `client_id`
+
+Data type: `String`
+
+Auth0 server-side unique identifier for Client.
 
 #### Parameters
 
