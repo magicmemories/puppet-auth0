@@ -221,9 +221,9 @@ This module was authored by Adam Gardner, and is Copyright (c) 2019 Magic Memori
 It is distributed under the terms of the Apache-2.0 license; see the LICENSE file for details.
 
 ## Development
-If you run into any problems, open an [issue](https://github.com/philomory/puppet-auth0/issues) or
-[fork](https://github.com/philomory/puppet-auth0/fork) and open a
-[Pull Request](https://github.com/philomory/puppet-auth0/pulls).
+If you run into any problems, open an [issue](https://github.com/magicmemories/puppet-auth0/issues) or
+[fork](https://github.com/magicmemories/puppet-auth0/fork) and open a
+[Pull Request](https://github.com/magicmemories/puppet-auth0/pulls).
 
 To be able to run the spec suite during development, first install the necessary dependencies:
 

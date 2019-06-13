@@ -4,7 +4,9 @@
   "author": "Adam Gardner",
   "summary": "This module configures resources in Auth0 tennants, and provides functions to query information back from Auth0 for building catalogs.",
   "license": "Apache-2.0",
-  "source": "https://github.com/philomory/puppet-auth0",
+  "source": "https://github.com/magicmemories/puppet-auth0",
+  "project_page": "https://github.com/magicmemories/puppet-auth0",
+  "issues_url": "https://github.com/magicmemories/puppet-auth0/issues",
   "dependencies": [
 
   ],
