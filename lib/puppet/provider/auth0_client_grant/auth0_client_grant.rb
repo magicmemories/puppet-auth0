@@ -76,7 +76,7 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
       if resource_identifier = found_client.dig('client_metadata','puppet_resource_identifier')
         resource_identifier
       else
-        context.warning("Auth0 Client #{found_client['name']} does not have a puppet_resource_identifier in its metadata. Using the client_id as the namevar.")
+        Puppet::Resource::Auth0Client::Auth0Client.warn_about(found_client['name'],context)
         "*#{found_client['client_id']}"
       end
     end
