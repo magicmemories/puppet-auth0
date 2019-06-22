@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.1.2
+Bugfix Release
+
+* Don't include the Identifier in the request body when updating a Resource Server.
+
 ## Release 0.1.1
 Bugfix Release
 
