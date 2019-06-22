@@ -59,6 +59,7 @@ class Puppet::Provider::Auth0ResourceServer::Auth0ResourceServer < Puppet::Resou
     should[:name] = should.delete(:display_name) if should.has_key?(:display_name)
     should[:scopes] = hash_to_scopes(should[:scopes]) if should.has_key?(:scopes)
     should.delete(:ensure)
+    should.delete(:identifier)
     should
   end
 end
