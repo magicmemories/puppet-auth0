@@ -12,10 +12,14 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
         ensure: 'present', 
         client_resource: res,
         audience: aud,
-        scopes: data['scope'],
+        scopes: data['scope']&.sort,
         client_id: data['client_id'],
       }
     end
+  end
+
+  def canonicalize(context,resources)
+    resources.each {|resource| resource[:scopes]&.sort! }
   end
 
   def create(context, name, should)

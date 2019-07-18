@@ -5,7 +5,7 @@ Puppet::ResourceApi.register_type(
   docs: <<-EOS,
       This type provides Puppet with the capabilities to manage client grants.
     EOS
-  features: ['remote_resource'],
+  features: ['remote_resource','canonicalize'],
   title_patterns: [
     {
       pattern: %r{^(?<client_resource>.+) -> (?<audience>.+)$},
