@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.1.3
+Bugfix Release
+
+* Ignore the order of scopes in the auth0_client_grant resource.
+
 ## Release 0.1.2
 Bugfix Release
 
