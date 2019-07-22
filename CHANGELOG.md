@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.2.0
+New features:
+
+* Added the ability to manage Auth0 Connections
+
 ## Release 0.1.3
 Bugfix Release
 
