@@ -119,6 +119,35 @@ auth0_rule { 'Example Rule':
 }
 ```
 
+### Assign a Connection to Clients
+```puppet
+auth0_connection { 'Example Connection':
+  clients  => [
+    'example_application',
+    'another_application',
+  ],
+  options  => {
+    brute_force_protection => true,
+    mfa                    => {
+      active                 => true,
+      return_enroll_settings => true,
+    },
+  },
+  strategy => 'auth0',
+}
+```
+If you pass `keep_extra_clients => true`, then clients assigned to that
+connection in Auth0 but not in Puppet will be retained; otherwise they will be
+removed. `keep_extra_options` behaves similarly. However, in either case these
+only have an effect if you specify a value for the `clients` or `options`
+attributes, respectively; omitting those attributes entirely will leave them
+untouched.
+
+`keep_extra_options` performs a non-recursive merge between the options stored
+in Auth0 and the options you specify; nested hashes such as the `mfa` hash in
+the example above will be overwritten even with `keep_extra_options`, if you
+provide a value for them.
+
 ## Usage - Querying Auth0
 
 The `auth0_get_client_credentials` `auth0_get_client_credentials_by_name`

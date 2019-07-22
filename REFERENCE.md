@@ -7,6 +7,7 @@
 
 * [`auth0_client`](#auth0_client): This type provides Puppet with the capabilities to manage Auth0 Client (Application) resources.
 * [`auth0_client_grant`](#auth0_client_grant): This type provides Puppet with the capabilities to manage client grants.
+* [`auth0_connection`](#auth0_connection): This type provides Puppet with the capabilities to manage ...
 * [`auth0_resource_server`](#auth0_resource_server): This type provides Puppet with the capabilities to manage Auth0 Resource Servers (APIs).
 * [`auth0_rule`](#auth0_rule): This type provides Puppet with the capabilities to manage Auth0 Rules
 
@@ -213,6 +214,71 @@ namevar
 Data type: `String`
 
 The puppet_resource_identifier of the client application receiving the grant.
+
+### auth0_connection
+
+This type provides Puppet with the capabilities to manage ...
+
+#### Properties
+
+The following properties are available in the `auth0_connection` type.
+
+##### `ensure`
+
+Data type: `Enum[present, absent]`
+
+Whether this resource should be present or absent on the target system.
+
+Default value: present
+
+##### `strategy`
+
+Data type: `String`
+
+The type of the connection, related to the identity provider; common values include "ad" (Active Directory), "auth0" (Username-Password DB stored by Auth0), "google-oauth2", etc.
+
+##### `options`
+
+Data type: `Optional[Hash]`
+
+A hash of options used to configure the Connection; structure of the hash depends on the selected Strategy.
+
+##### `clients`
+
+Data type: `Optional[Array[String]]`
+
+A list of client resource identifiers for which this connection is enabled.
+
+##### `realms`
+
+Data type: `Optional[Array[String]]`
+
+Defines the realms for which the connection will be used (ie: email domains). If the array is empty or the property is not specified, the connection name will be added as realm.
+
+#### Parameters
+
+The following parameters are available in the `auth0_connection` type.
+
+##### `name`
+
+namevar
+
+Data type: `Pattern[/^([\da-zA-Z]|[\da-zA-Z][\da-zA-Z-]{0,126}[\da-zA-Z])$/]`
+_*this data type contains a regex that may not be accurately reflected in generated documentation_
+
+The name of the connection. Must start and end with an alphanumeric character and can only contain alphanumeric characters and '-'. Max length 128.
+
+##### `keep_extra_clients`
+
+Data type: `Boolean`
+
+If true, clients enabled for this connection in Auth0 but not in Puppet will be left in place. Only matters is clients property is specified; otherwise clients are always left alone.
+
+##### `keep_extra_options`
+
+Data type: `Boolean`
+
+If true, options stored in Auth0 with no specified value in Puppet will be left as-is. Only matters if options property is specified; otherwise options is always left alone.
 
 ### auth0_resource_server
 
