@@ -4,6 +4,14 @@ Puppet::ResourceApi.register_type(
   name: 'auth0_client',
   docs: <<-EOS,
       This type provides Puppet with the capabilities to manage Auth0 Client (Application) resources.
+
+      Note that this resource type makes use of the following scopes from the
+      Auth0 Management API:
+
+        * `read:clients`
+        * `create:clients`
+        * `delete:clients`
+        * `update:clients`
     EOS
   features: ['remote_resource','canonicalize'],
   attributes:   {

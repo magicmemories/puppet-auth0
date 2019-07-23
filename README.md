@@ -121,7 +121,7 @@ auth0_rule { 'Example Rule':
 
 ### Assign a Connection to Clients
 ```puppet
-auth0_connection { 'Example Connection':
+auth0_connection { 'ExampleConnection':
   clients  => [
     'example_application',
     'another_application',

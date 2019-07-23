@@ -5,11 +5,11 @@
 
 **Resource types**
 
-* [`auth0_client`](#auth0_client): This type provides Puppet with the capabilities to manage Auth0 Client (Application) resources.
+* [`auth0_client`](#auth0_client): This type provides Puppet with the capabilities to manage Auth0 Client (Application) resources.  Note that this resource type makes use of th
 * [`auth0_client_grant`](#auth0_client_grant): This type provides Puppet with the capabilities to manage client grants.
 * [`auth0_connection`](#auth0_connection): This type provides Puppet with the capabilities to manage ...
-* [`auth0_resource_server`](#auth0_resource_server): This type provides Puppet with the capabilities to manage Auth0 Resource Servers (APIs).
-* [`auth0_rule`](#auth0_rule): This type provides Puppet with the capabilities to manage Auth0 Rules
+* [`auth0_resource_server`](#auth0_resource_server): This type provides Puppet with the capabilities to manage Auth0 Resource Servers (APIs).  Note that this resource type makes use of the follo
+* [`auth0_rule`](#auth0_rule): This type provides Puppet with the capabilities to manage Auth0 Rules.  Note that this resource type makes use of the following scopes from t
 
 **Functions**
 
@@ -21,6 +21,14 @@
 ### auth0_client
 
 This type provides Puppet with the capabilities to manage Auth0 Client (Application) resources.
+
+Note that this resource type makes use of the following scopes from the
+Auth0 Management API:
+
+  * `read:clients`
+  * `create:clients`
+  * `delete:clients`
+  * `update:clients`
 
 #### Properties
 
@@ -284,6 +292,14 @@ If true, options stored in Auth0 with no specified value in Puppet will be left 
 
 This type provides Puppet with the capabilities to manage Auth0 Resource Servers (APIs).
 
+Note that this resource type makes use of the following scopes from the
+Auth0 Management API:
+
+  * `read:resource_servers`
+  * `create:resource_servers`
+  * `delete:resource_servers`
+  * `update:resource_servers`
+
 #### Properties
 
 The following properties are available in the `auth0_resource_server` type.
@@ -353,7 +369,15 @@ The identifier of the resource server.
 
 ### auth0_rule
 
-This type provides Puppet with the capabilities to manage Auth0 Rules
+This type provides Puppet with the capabilities to manage Auth0 Rules.
+
+Note that this resource type makes use of the following scopes from the
+Auth0 Management API:
+
+  * `read:rules`
+  * `create:rules`
+  * `delete:rules`
+  * `update:rules`
 
 #### Properties
 
@@ -415,6 +439,8 @@ The name of the resource you want to manage.
 Type: Ruby 4.x API
 
 Retrieves Client (Application) credentials from the Auth0 Management API.
+
+* **Note** This function requires the `read:client_keys` scope of Auth0's Management API.
 
 #### `auth0_get_client_credentials(String $puppet_resource_identifier, String $management_client_id, String $management_client_secret, String $tenant_domain)`
 
@@ -488,6 +514,10 @@ The name of the client whose credentials will be retrieved
 Type: Ruby 4.x API
 
 Retrieves Client (Application) credentials from the Auth0 Management API by name.
+
+* **Note** This function uses the following scopes from Auth0's Management API:
+  * `read:clients`
+  * `read:client_keys`
 
 #### `auth0_get_client_credentials_by_name(String $client_name, String $management_client_id, String $management_client_secret, String $tenant_domain)`
 

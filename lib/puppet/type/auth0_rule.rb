@@ -3,7 +3,15 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'auth0_rule',
   docs: <<-EOS,
-      This type provides Puppet with the capabilities to manage Auth0 Rules
+      This type provides Puppet with the capabilities to manage Auth0 Rules.
+
+      Note that this resource type makes use of the following scopes from the
+      Auth0 Management API:
+
+        * `read:rules`
+        * `create:rules`
+        * `delete:rules`
+        * `update:rules`
     EOS
   features: ['remote_resource'],
   attributes:   {
