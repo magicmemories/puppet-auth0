@@ -6,8 +6,8 @@
 **Resource types**
 
 * [`auth0_client`](#auth0_client): This type provides Puppet with the capabilities to manage Auth0 Client (Application) resources.  Note that this resource type makes use of th
-* [`auth0_client_grant`](#auth0_client_grant): This type provides Puppet with the capabilities to manage client grants.
-* [`auth0_connection`](#auth0_connection): This type provides Puppet with the capabilities to manage ...
+* [`auth0_client_grant`](#auth0_client_grant): This type provides Puppet with the capabilities to manage client grants.  Note that this resource type makes use of the following scopes from
+* [`auth0_connection`](#auth0_connection): This type provides Puppet with the capabilities to manage Auth0 Connections.  Note that this resource type makes use of the following scopes 
 * [`auth0_resource_server`](#auth0_resource_server): This type provides Puppet with the capabilities to manage Auth0 Resource Servers (APIs).  Note that this resource type makes use of the follo
 * [`auth0_rule`](#auth0_rule): This type provides Puppet with the capabilities to manage Auth0 Rules.  Note that this resource type makes use of the following scopes from t
 
@@ -179,6 +179,15 @@ Auth0 server-side unique identifier for Client.
 
 This type provides Puppet with the capabilities to manage client grants.
 
+Note that this resource type makes use of the following scopes from the
+Auth0 Management API:
+
+  * `read:client_grants`
+  * `create:client_grants`
+  * `delete:client_grants`
+  * `update:client_grants`
+  * `read:clients`
+
 #### Properties
 
 The following properties are available in the `auth0_client_grant` type.
@@ -225,7 +234,16 @@ The puppet_resource_identifier of the client application receiving the grant.
 
 ### auth0_connection
 
-This type provides Puppet with the capabilities to manage ...
+This type provides Puppet with the capabilities to manage Auth0 Connections.
+
+Note that this resource type makes use of the following scopes from the
+Auth0 Management API:
+
+  * `read:connections`
+  * `create:connections`
+  * `delete:connections`
+  * `update:connections`
+  * `read:clients`
 
 #### Properties
 
@@ -440,7 +458,9 @@ Type: Ruby 4.x API
 
 Retrieves Client (Application) credentials from the Auth0 Management API.
 
-* **Note** This function requires the `read:client_keys` scope of Auth0's Management API.
+* **Note** This function uses the following scopes from Auth0's Management API:
+  * `read:clients`
+  * `read:client_keys`
 
 #### `auth0_get_client_credentials(String $puppet_resource_identifier, String $management_client_id, String $management_client_secret, String $tenant_domain)`
 

@@ -4,6 +4,15 @@ Puppet::ResourceApi.register_type(
   name: 'auth0_client_grant',
   docs: <<-EOS,
       This type provides Puppet with the capabilities to manage client grants.
+
+      Note that this resource type makes use of the following scopes from the
+      Auth0 Management API:
+
+        * `read:client_grants`
+        * `create:client_grants`
+        * `delete:client_grants`
+        * `update:client_grants`
+        * `read:clients`
     EOS
   features: ['remote_resource','canonicalize'],
   title_patterns: [

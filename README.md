@@ -19,7 +19,7 @@ for use in Machine-to-Machine authentication flows (which you can then write to 
 
 In order for Puppet to access Auth0, you will need to create a Machine-to-Machine Application (aka a `non_interactive` client) inside Auth0,
 and grant that client access to the Auth0 Management API. See [Machine-to-Machine Applications](https://auth0.com/docs/applications/machine-to-machine)
-for details. 
+for details. The scopes used by each resource type and function are documented in REFERENCE.md.
 
 This module treats each Auth0 tenant as a remote 'device', and uses the `puppet device` pattern for managing Auth0 resources. See the
 [Puppet Device](https://puppet.com/docs/puppet/5.5/puppet_device.html) Documentation for details. The easiest way to get started is to use

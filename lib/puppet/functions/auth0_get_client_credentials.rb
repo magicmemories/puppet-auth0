@@ -2,7 +2,9 @@ require_relative '../pops/adapters/auth0_adapter'
 
 # Retrieves Client (Application) credentials from the Auth0 Management API.
 # @note 
-#   This function requires the `read:client_keys` scope of Auth0's Management API.
+#   This function uses the following scopes from Auth0's Management API:
+#     * `read:clients`
+#     * `read:client_keys`
 Puppet::Functions.create_function(:auth0_get_client_credentials) do
   local_types do
     type 'Credentials = Struct[{client_id => String, client_secret => String}]'

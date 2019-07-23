@@ -3,7 +3,16 @@ require 'puppet/resource_api'
 Puppet::ResourceApi.register_type(
   name: 'auth0_connection',
   docs: <<-EOS,
-      This type provides Puppet with the capabilities to manage ...
+      This type provides Puppet with the capabilities to manage Auth0 Connections.
+
+      Note that this resource type makes use of the following scopes from the
+      Auth0 Management API:
+
+        * `read:connections`
+        * `create:connections`
+        * `delete:connections`
+        * `update:connections`
+        * `read:clients`
     EOS
   features: ['remote_resource','canonicalize'],
   attributes: {

@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.2.2
+This release adds some missing documentation.
+
 ## Release 0.2.1
 This release adds some missing documentation.
 
