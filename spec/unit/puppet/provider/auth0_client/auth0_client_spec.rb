@@ -114,6 +114,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(callbacks: ['https://foo.com/callback','https://localhost:8080/callback']) }
 
         it 'leaves extra callbacks in place' do
+          expect(context).to receive(:debug).with(%r{\AKeeping extra callbacks})
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end
@@ -136,6 +137,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(allowed_origins: ['https://foo.com','https://localhost:8080']) }
 
         it 'leaves extra allowed_origins in place' do
+          expect(context).to receive(:debug).with(%r{\AKeeping extra allowed_origins})
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end
@@ -158,6 +160,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(web_origins: ['https://foo.com','https://localhost:8080']) }
 
         it 'leaves extra web_origins in place' do
+          expect(context).to receive(:debug).with(%r{\AKeeping extra web_origins})
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end
@@ -180,6 +183,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
         let(:client_canonical) { client_is.merge(allowed_logout_urls: ['https://foo.com/logged_out','https://localhost:8080/logged_out']) }
 
         it 'leaves extra allowed_logout_urls in place' do
+          expect(context).to receive(:debug).with(%r{\AKeeping extra allowed_logout_urls})
           expect(provider.canonicalize(context,[build(:client_resource,client_should)])).to eq([build(:client_resource,client_canonical)])
         end
       end

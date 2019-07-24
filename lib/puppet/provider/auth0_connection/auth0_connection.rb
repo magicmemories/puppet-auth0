@@ -49,12 +49,12 @@ class Puppet::Provider::Auth0Connection::Auth0Connection < Puppet::ResourceApi::
         if resource.delete(:keep_extra_clients) && resource[:clients] && remote_connection['enabled_clients']
           remote_clients = remote_connection['enabled_clients'].map {|id| client_resource_identifier_by_id(context, id) }
           unmanaged_clients = (remote_clients - resource[:clients])
-          context.debug("Keeping extra clients: #{unmanaged_clients.inspect}")
+          context.debug("Keeping extra clients for #{resource[:name]}: #{unmanaged_clients.inspect}") unless unmanaged_clients.empty?
           resource[:clients] += unmanaged_clients
         end
         if resource.delete(:keep_extra_options) && resource[:options] && remote_connection['options']
           unmanaged_options = remote_connection['options'].reject {|k,v| resource[:options].has_key?(k) }
-          context.debug("Keeping extra options: #{unmanaged_options.inspect}")
+          context.debug("Keeping extra options for #{resource[:name]}: #{unmanaged_options.inspect}") unless unmanaged_options.empty?
           resource[:options] = remote_connection['options'].merge(resource[:options])
         end
       end
