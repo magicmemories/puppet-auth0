@@ -66,7 +66,9 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
       if remote_client
         %i{callbacks allowed_origins web_origins allowed_logout_urls}.each do |prop|
           if resource.delete(:"keep_extra_#{prop}") && resource[prop] && remote_client[prop.to_s]
-            resource[prop] += (remote_client[prop.to_s] - resource[prop])
+            unmanaged_items = (remote_client[prop.to_s] - resource[prop])
+            context.debug("Keeping unmamanged #{prop} entries: #{unmanaged_items.inspect}")
+            resource[prop] += unmanaged_items
           end
         end
       end

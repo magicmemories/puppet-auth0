@@ -7,14 +7,18 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
     client_grants(context).map do |data|
       res = get_client_puppet_resource_identifier_by_id(context,data['client_id'])
       aud = data['audience'] 
-      {
-        title: "#{res} -> #{aud}",
-        ensure: 'present', 
-        client_resource: res,
-        audience: aud,
-        scopes: data['scope']&.sort,
-        client_id: data['client_id'],
-      }
+      if res
+        {
+          title: "#{res} -> #{aud}",
+          ensure: 'present', 
+          client_resource: res,
+          audience: aud,
+          scopes: data['scope']&.sort,
+          client_id: data['client_id'],
+        }
+      else
+        raise "Could not find a client for client_id #{data['client_id']} from data #{data.inspect}"
+      end
     end
   end
 
