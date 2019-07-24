@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.2.4
+This release improves debug output.
+
 ## Release 0.2.3
 This release adds additional debug output and error handling.
 
