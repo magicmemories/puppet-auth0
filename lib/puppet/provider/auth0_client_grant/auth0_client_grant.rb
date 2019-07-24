@@ -17,7 +17,6 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
           client_id: data['client_id'],
         }
       else
-        raise "Could not find a client for client_id #{data['client_id']} from data #{data.inspect}"
       end
     end
   end
@@ -87,6 +86,9 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
         Puppet::Provider::Auth0Client::Auth0Client.warn_about(found_client['name'],context)
         "*#{found_client['client_id']}"
       end
+    else
+      context.warning("Found client_grant for client_id that doesn't exist: #{client_id}")
+      "*#{client_id}"
     end
   end
 end
