@@ -41,7 +41,7 @@ to use the [`puppet_gem`](https://puppet.com/docs/puppet/5.5/types/package.html#
 
 ```puppet
 package { 'auth0':
-  ensure   => present,
+  ensure   => '4.11.0',
   provider => 'puppet_gem',
 }
 ```
