@@ -1,4 +1,5 @@
 require 'puppet/resource_api/simple_provider'
+require_relative '../auth0_client/auth0_client'
 
 # Implementation for the auth0_connection type using the Resource API.
 class Puppet::Provider::Auth0Connection::Auth0Connection < Puppet::ResourceApi::SimpleProvider
@@ -99,7 +100,7 @@ class Puppet::Provider::Auth0Connection::Auth0Connection < Puppet::ResourceApi::
       found_clients.dig(0,'client_id')
     end
   end
-  
+
   def clients(context)
     @__clients ||= context.device.get_clients.reject {|c| c['global'] }
   end

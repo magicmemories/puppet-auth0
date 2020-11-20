@@ -42,7 +42,7 @@ to use the [`puppet_gem`](https://puppet.com/docs/puppet/5.5/types/package.html#
 ```puppet
 package { 'auth0':
   ensure   => present,
-  provider => 'puppet_gem', 
+  provider => 'puppet_gem',
 }
 ```
 
@@ -52,12 +52,12 @@ with the [puppetlabs-puppetserver_gem](https://forge.puppet.com/puppetlabs/puppe
 ```puppet
 package { 'auth0':
   ensure   => present,
-  provider => 'puppetserver_gem', 
+  provider => 'puppetserver_gem',
 }
 ```
 
 If you are using this module with Puppet 5, you will need to have access to the [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) gem
-on both your server and agents. You can either do this via `package` resources with the `puppet_gem` and `puppetserver_gem` types as above, or use the 
+on both your server and agents. You can either do this via `package` resources with the `puppet_gem` and `puppetserver_gem` types as above, or use the
 [`puppetlabs-resource_api`](https://forge.puppet.com/puppetlabs/resource_api) module to do it for you.
 
 ## Usage - Managing Auth0
@@ -86,7 +86,7 @@ This is useful for dev/test tenants in which individual developers may add callb
 auth0_resource_server { 'https://api.example.com':
   display_name => "Example API",
   signing_alg  => "RS256",
-  scopes       => { 
+  scopes       => {
     'read:thingies'  => 'Get information about Thingies',
     'write:thingies' => 'Create, update and destroy Thingies',
     'read:doodads'   => 'Get information about Doodads',
@@ -210,7 +210,7 @@ In order to work around this for clients we look for a field named `puppet_resou
 `client_metadata` hash, and use that as the `namevar`. This attribute should be treated as unique and immutable,
 even if auth0 doesn't force you to.
 
-Rules don't have anything analogous to `client_metadata`, so we're stuck using the rule's "Display Name" as a namevar. 
+Rules don't have anything analogous to `client_metadata`, so we're stuck using the rule's "Display Name" as a namevar.
 Again, because of this you should treat Rule names as unique and immutable identifiers, even though Auth0 doesn't require you to.
 
 `auth0_resource_server` resources don't have this problem, since the `identifier` (aka 'Audience') attribute of a Resource Server _is_
@@ -245,7 +245,7 @@ and not all properties of the implemented resource types are supported yet. Spec
 
 ## License and Authorship
 
-This module was authored by Adam Gardner, and is Copyright (c) 2019 Magic Memories (USA) LLC. 
+This module was authored by Adam Gardner, and is Copyright (c) 2019 Magic Memories (USA) LLC.
 
 It is distributed under the terms of the Apache-2.0 license; see the LICENSE file for details.
 

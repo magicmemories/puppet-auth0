@@ -1,16 +1,17 @@
 require 'puppet/resource_api/simple_provider'
 require_relative '../../util/network_device/auth0_tenant/device'
+require_relative '../auth0_client/auth0_client'
 
 # Implementation for the auth0_client_grant type using the Resource API.
 class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi::SimpleProvider
   def get(context)
     client_grants(context).map do |data|
       res = get_client_puppet_resource_identifier_by_id(context,data['client_id'])
-      aud = data['audience'] 
+      aud = data['audience']
       if res
         {
           title: "#{res} -> #{aud}",
-          ensure: 'present', 
+          ensure: 'present',
           client_resource: res,
           audience: aud,
           scopes: data['scope']&.sort,
@@ -83,7 +84,7 @@ class Puppet::Provider::Auth0ClientGrant::Auth0ClientGrant < Puppet::ResourceApi
       if resource_identifier = found_client.dig('client_metadata','puppet_resource_identifier')
         resource_identifier
       else
-        Puppet::Provider::Auth0Client::Auth0Client.warn_about(found_client['name'],context)
+        ::Puppet::Provider::Auth0Client::Auth0Client.warn_about(found_client['name'],context)
         "*#{found_client['client_id']}"
       end
     else

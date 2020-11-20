@@ -13,7 +13,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
   before(:each) do
     allow(context).to receive(:device).and_return(auth0_tenant)
   end
-  
+
   describe '#get' do
     let(:base) { attributes_for(:client) }
     let(:api_data) { [build(:client_api,base)] }
@@ -30,7 +30,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
 
     context "when a client doesn't have a puppet_resource_identifier" do
       let(:base) { attributes_for(:client).tap {|attrs| attrs[:client_metadata].delete('puppet_resource_identifier') } }
-      
+
       it 'warns about missing identifier and uses client_id instead' do
         expect(context).to receive(:warning).with(%r{does not have a puppet_resource_identifier in its metadata})
         expect(provider.get(context)).to include(a_hash_including(puppet_resource_identifier: "*#{base[:client_id]}"))
@@ -99,7 +99,7 @@ RSpec.describe Puppet::Provider::Auth0Client::Auth0Client do
 
       provider.delete(context, '*abcd1234')
     end
-      
+
   end
 
   describe '#canonicalize(context,resources)' do
