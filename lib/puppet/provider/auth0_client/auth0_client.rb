@@ -104,7 +104,7 @@ class Puppet::Provider::Auth0Client::Auth0Client < Puppet::ResourceApi::SimplePr
       'lifetime_in_seconds' => attrs[:jwt_lifetime_in_seconds],
       'alg'                 => attrs[:jwt_alg],
     }.compact
-    data[:jwt_configuration] = jwt_configuration unless jwt_configuration.empty?
+    data['jwt_configuration'] = jwt_configuration unless jwt_configuration.empty?
 
     data.compact
   end

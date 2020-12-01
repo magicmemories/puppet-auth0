@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.3.1
+Bugfix Release, fixes patching auth0 clients with JWT token information.
+
 ## Release 0.3.0
 This release adds handling of rate-limit errors and request pagination.
 
