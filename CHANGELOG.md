@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.3.2
+Bugfix to allow this to work with both Puppet 5 (Ruby 2.4) and 6 (Ruby 2.5+)
+
 ## Release 0.3.1
 Bugfix Release, fixes patching auth0 clients with JWT token information.
 

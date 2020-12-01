@@ -11,12 +11,25 @@ module Puppet::Util::NetworkDevice::Auth0_tenant
     }
 
     Auth0::Api::V2.instance_methods.each do |method|
-      define_method(method) do |*args, **kwargs|
-        handling_rate_limit do
-          if PAGINATED_METHODS.include?(method)
-            paginate_request(method, *args, **kwargs)
-          else
-            @connection.send(method, *args, **kwargs)
+      # The way **kwargs is handled changed in Ruby 2.7.0
+      if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.7.0')
+        define_method(method) do |*args, **kwargs|
+          handling_rate_limit do
+            if PAGINATED_METHODS.include?(method)
+              paginate_request(method, *args, **kwargs)
+            else
+              @connection.send(method, *args, **kwargs)
+            end
+          end
+        end
+      else
+        define_method(method) do |*args|
+          handling_rate_limit do
+            if PAGINATED_METHODS.include?(method)
+              paginate_request(method, *args)
+            else
+              @connection.send(method, *args)
+            end
           end
         end
       end
