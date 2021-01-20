@@ -1,7 +1,7 @@
 require_relative '../pops/adapters/auth0_adapter'
 
 # Retrieves Client (Application) credentials from the Auth0 Management API by name.
-# @note 
+# @note
 #   This function uses the following scopes from Auth0's Management API:
 #     * `read:clients`
 #     * `read:client_keys`
@@ -10,7 +10,7 @@ Puppet::Functions.create_function(:auth0_get_client_credentials_by_name) do
     type 'Credentials = Struct[{client_id => String, client_secret => String}]'
   end
 
-  # Gets client_id and client_secret for a client specified by name. 
+  # Gets client_id and client_secret for a client specified by name.
   # @param client_name
   #   The display name of the client whose credentials will be retrieved
   # @param management_client_id
@@ -52,11 +52,11 @@ Puppet::Functions.create_function(:auth0_get_client_credentials_by_name) do
   def query(client_name,id,secret,domain)
     api_client = Puppet::Pops::Adapters::Auth0Adapter.adapt(closure_scope.compiler).client(id,secret,domain)
     Puppet.info("Querying the Auth0 tenant at #{domain} for clients")
-    
-    found_clients = api_client.get_clients(fields: ['name','client_id','client_secret']).find_all {|c| c['name'] == client_name }
+
+    found_clients = find_clients(api_client,client_name)
     Puppet.warning("Found #{found_clients.count} clients with the name #{client_name}, choosing the first one.") if found_clients.count > 1
     client = found_clients.first
-    
+
     if client
       Puppet.debug("Got client data: #{client.inspect}")
       {'client_id' => client['client_id'], 'client_secret' => client['client_secret']}
@@ -71,5 +71,15 @@ Puppet::Functions.create_function(:auth0_get_client_credentials_by_name) do
     management_client_secret = closure_scope.call_function('lookup','auth0::management_client_secret')
     tenant_domain = closure_scope.call_function('lookup','auth0::tenant_domain')
     query(client_name,management_client_id,management_client_secret,tenant_domain)
+  end
+
+  def find_clients(api_client, client_name)
+    results = []
+    0.step do |page|
+      result = api_client.get_clients(fields: ['name','client_id','client_secret'], page: page, per_page: 50)
+      break if result.empty?
+      results.concat(result)
+    end
+    results.find_all {|c| c['name'] == client_name }
   end
 end

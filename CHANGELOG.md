@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.3.3
+Bugfix release to add missing pagination to requests made for `auth0_get_client_credentials_by_name` function.
+
 ## Release 0.3.2
 Bugfix to allow this to work with both Puppet 5 (Ruby 2.4) and 6 (Ruby 2.5+)
 
