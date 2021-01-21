@@ -79,7 +79,7 @@ Puppet::Functions.create_function(:auth0_get_client_credentials) do
   def find_clients(api_client, puppet_resource_identifier)
     results = []
     0.step do |page|
-      result = api_client.get_clients(fields: ['name','client_id','client_secret'], page: page, per_page: 50)
+      result = api_client.get_clients(fields: ['client_metadata','client_id','client_secret'], page: page, per_page: 50)
       break if result.empty?
       results.concat(result)
     end

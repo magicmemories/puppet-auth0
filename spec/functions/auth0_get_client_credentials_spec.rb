@@ -17,12 +17,12 @@ RSpec.describe 'auth0_get_client_credentials' do
     allow(Puppet::Pops::Adapters::Auth0Adapter).to receive(:adapt).and_return(auth0_adapter)
     allow(auth0_adapter).to receive(:client).and_return(auth0_client)
     allow(auth0_client).to receive(:get_clients).with(
-      fields: ['name','client_id','client_secret'],
+      fields: ['client_metadata','client_id','client_secret'],
       page: 0,
       per_page: 50,
     ).and_return(api_data)
     allow(auth0_client).to receive(:get_clients).with(
-      fields: ['name', 'client_id', 'client_secret'],
+      fields: ['client_metadata', 'client_id', 'client_secret'],
       page: 1,
       per_page: 50,
     ).and_return([])
