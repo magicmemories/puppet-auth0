@@ -1,7 +1,7 @@
 require_relative '../pops/adapters/auth0_adapter'
 
 # Retrieves Client (Application) credentials from the Auth0 Management API.
-# @note 
+# @note
 #   This function uses the following scopes from Auth0's Management API:
 #     * `read:clients`
 #     * `read:client_keys`
@@ -11,7 +11,7 @@ Puppet::Functions.create_function(:auth0_get_client_credentials) do
   end
 
   # Gets client_id and client_secret for a client specified by its
-  # puppet_resource_identifier. 
+  # puppet_resource_identifier.
   # @param puppet_resource_identifier
   #   The puppet_resource_identifier of the client whose credentials will be
   #   retrieved.
@@ -55,12 +55,11 @@ Puppet::Functions.create_function(:auth0_get_client_credentials) do
   def query(puppet_resource_identifier,id,secret,domain)
     api_client = Puppet::Pops::Adapters::Auth0Adapter.adapt(closure_scope.compiler).client(id,secret,domain)
     Puppet.info("Querying the Auth0 tenant at #{domain} for clients")
-    
-    all_clients = api_client.get_clients(fields: ['client_metadata','client_id','client_secret'])
-    found_clients = all_clients.find_all {|c| c.dig('client_metadata','puppet_resource_identifier') == puppet_resource_identifier }
+
+    found_clients = find_clients(api_client, puppet_resource_identifier)
     Puppet.warning("Found #{found_clients.count} clients whose puppet_resource_identifier is  #{puppet_resource_identifier}, choosing the first one.") if found_clients.count > 1
     client = found_clients.first
-    
+
     if client
       Puppet.debug("Got client data: #{client.inspect}")
       {'client_id' => client['client_id'], 'client_secret' => client['client_secret']}
@@ -75,5 +74,15 @@ Puppet::Functions.create_function(:auth0_get_client_credentials) do
     management_client_secret = closure_scope.call_function('lookup','auth0::management_client_secret')
     tenant_domain = closure_scope.call_function('lookup','auth0::tenant_domain')
     query(puppet_resource_identifier,management_client_id,management_client_secret,tenant_domain)
+  end
+
+  def find_clients(api_client, puppet_resource_identifier)
+    results = []
+    0.step do |page|
+      result = api_client.get_clients(fields: ['name','client_id','client_secret'], page: page, per_page: 50)
+      break if result.empty?
+      results.concat(result)
+    end
+    results.find_all {|c| c.dig('client_metadata','puppet_resource_identifier') == puppet_resource_identifier }
   end
 end

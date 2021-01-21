@@ -16,7 +16,16 @@ RSpec.describe 'auth0_get_client_credentials' do
   before(:each) do
     allow(Puppet::Pops::Adapters::Auth0Adapter).to receive(:adapt).and_return(auth0_adapter)
     allow(auth0_adapter).to receive(:client).and_return(auth0_client)
-    allow(auth0_client).to receive(:get_clients).with(fields: ['client_metadata','client_id','client_secret']).and_return(api_data)
+    allow(auth0_client).to receive(:get_clients).with(
+      fields: ['name','client_id','client_secret'],
+      page: 0,
+      per_page: 50,
+    ).and_return(api_data)
+    allow(auth0_client).to receive(:get_clients).with(
+      fields: ['name', 'client_id', 'client_secret'],
+      page: 1,
+      per_page: 50,
+    ).and_return([])
   end
 
   shared_context 'hiera' do
@@ -37,7 +46,7 @@ RSpec.describe 'auth0_get_client_credentials' do
     context 'with management api credentials in hiera' do
       include_context 'hiera'
       it { is_expected.to run.with_params('foo_bar').and_return(target_result) }
-    end 
+    end
   end
 
   context 'when no client with the requested name exists' do

@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release 0.3.4
+Bugfix release to add missing pagination to requests made for `auth0_get_client_credentials` function.
+
 ## Release 0.3.3
 Bugfix release to add missing pagination to requests made for `auth0_get_client_credentials_by_name` function.
 
